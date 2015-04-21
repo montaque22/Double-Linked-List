@@ -14,7 +14,6 @@
 function DoubleLinkedList(){
     var tail;
     var head;
-    var internalArray = [];
     var size = 0;
     var undoCommandList = [];
     var shouldStoreCommand = true;
@@ -283,3 +282,6 @@ function DoubleLinkedList(){
         }
     };
 }
+
+if(typeof module !== 'undefined' && this.module !== module && module.exports)
+    module.exports = DoubleLinkedList;

@@ -1,0 +1,26 @@
+{
+  "name": "double-linkedlist",
+  "version": "0.0.0",
+  "description": "A double linked list data structure for storing data",
+  "main": "doubleLinkList.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/montaque22/Double-Linked-List"
+  },
+  "keywords": [
+    "data",
+    "structure",
+    "linked",
+    "list",
+    "list",
+    "array"
+  ],
+  "author": "Michael Montaque",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/montaque22/Double-Linked-List/issues"
+  }
+}
