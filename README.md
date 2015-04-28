@@ -49,6 +49,10 @@ commands include: (Commands with a star * indicates that it can be undone
     Returns an array of the data give
 - findAll
     Given a comparator or an object, it will return any node that matches
+- move
+    Takes two parameters: The index of the node you want to move and the index to where you want to move it
+- onChange
+    Takes in a function. Whenever there is an add or delete, it will fire the function given.
 
 
 
