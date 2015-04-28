@@ -10,7 +10,6 @@
  - findAll: finds all the node matching the comparator or object
  */
 
-
 function DoubleLinkedList(){
     var tail;
     var head;
@@ -18,6 +17,7 @@ function DoubleLinkedList(){
     var undoCommandList = [];
     var shouldStoreCommand = true;
     var _this = this;
+    var onChangeList = [];
 
     /*
      HELPER FUNCTIONS: StoreCommand  AND   Wrapper
@@ -25,6 +25,9 @@ function DoubleLinkedList(){
      */
     function storeCommand(curriedCommand){
         shouldStoreCommand && undoCommandList.add(curriedCommand);
+        for(var i = 0;i < onChangeList.length;i++){
+            onChangeList[i]();
+        }
     }
 
     function wrapper(method){
@@ -62,7 +65,7 @@ function DoubleLinkedList(){
         }
 
         // Remove item from the end
-        else if(position === size -1){
+        else if(position === size - 1){
             current = tail;
             tail =  tail.getPrevious();
             tail && tail.setNext(null);
@@ -118,11 +121,31 @@ function DoubleLinkedList(){
         // Inserting Anywhere in the middle
         else{
             var current = head;
-            for(var i = 1; i < size-1; i++){
+            for(var i = 0; i < size; i++){
                 if(i === position){
+                    /*
+                     newNode -->current
+
+                     Prev <---> current
+                     */
                     node.setNext(current);
+                    /*
+                     Prev <-- newNode --> current
+
+                     Prev <---> current
+                     */
                     node.setPrevious(current.getPrevious());
+
+                    /*
+                     Prev <--> newNode --> current
+
+                     Prev <--- current
+                     */
                     current.getPrevious().setNext(node);
+                    /*
+                     Prev <--> newNode <--> current
+                     */
+                    current.setPrevious(node);
 
                     break;
                 }
@@ -131,6 +154,13 @@ function DoubleLinkedList(){
         }
         storeCommand(wrapper(deleteAtPosition)(position));
         size++;
+    }
+
+    function undo(){
+        shouldStoreCommand = false;
+        var method = undoCommandList.pop();
+        typeof method === 'function' && method();
+        shouldStoreCommand = true;
     }
 
 
@@ -152,7 +182,12 @@ function DoubleLinkedList(){
                 return data;
             }
         };
-
+        this.hasNext = function(){
+            return _this.getNext() !== undefined;
+        }
+        this.hasPrev = function(){
+            return _this.getPrevious() !== undefined;
+        }
         this.setNext = function(obj){
             next = obj;
         }
@@ -177,15 +212,13 @@ function DoubleLinkedList(){
      ------ METHODS AVAILABLE TO THE USER ------
      */
     return {
+        onChange:function(func){
+            typeof func === 'function' && onChangeList.add(func);
+        },
         canUndo:function(){
             return undoCommandList.length > 0
         },
-        undo:function(){
-            shouldStoreCommand = false;
-            var method = undoCommandList.pop();
-            typeof method === 'function' && method();
-            shouldStoreCommand = true;
-        },
+        undo:undo,
 
         clearUndo:function(){
             undoCommandList = [];
@@ -200,12 +233,12 @@ function DoubleLinkedList(){
         },
 
         insertAtStart:function(data){
-            this.insertAtPosition(data,0);
+            insertAtPosition(data,0);
 
         },
 
         insertAtEnd:function(data){
-            this.insertAtPosition(data,size);
+            insertAtPosition(data,size);
         },
 
         insertAtPosition:insertAtPosition,
@@ -214,26 +247,65 @@ function DoubleLinkedList(){
 
         deleteAll:function(){
             var counter = size;
+            var undoItAll = [];
             for(;counter > 0;counter--){
-                this.deleteAtPosition(0);
+                deleteAtPosition(0);
+                undoItAll.add(undo)
             }
+            storeCommand(function(){
+                for(var i = 0; i < undoItAll.length;i++){
+                    undoItAll[i]();
+                }
+            });
         },
 
-        removeNode:function(comparitor){
-            var current =  head;
+        removeNode:function(comparitor, isReversed){
+            var current = isReversed ? tail : head;
 
-            for(var i = 0; i < size; i++){
-                if(comparitor(current)){
-                    this.deleteAtPosition(i);
-                    break;
+            if(isReversed){
+                for(var i = size - 1 ; i >= 0; i--){
+                    if(comparitor(current)){
+                        deleteAtPosition(i);
+                        break;
+                    }
+                    current = current.getPrevious();
                 }
-                current = current.getNext();
+            }else{
+                for(var i = 0; i < size; i++){
+                    if(comparitor(current)){
+                        deleteAtPosition(i);
+                        break;
+                    }
+                    current = current.getNext();
+                }
             }
         },
 
         getTail:function(){return tail;},
 
         getHead:function(){return head;},
+
+        move:function(oldIdx, newIdx){
+            //if invalid Number, leave
+            if(oldIdx === newIdx || oldIdx < 0 || newIdx < 0 || isNaN(oldIdx) || isNaN(newIdx)){
+                return
+            }
+            var counter = 0;
+            var current = head;
+
+            for(var counter = 0;counter < oldIdx;counter++){
+                current = current.getNext();
+            }
+            var data =  current.getProtectedData();
+            deleteAtPosition(oldIdx);
+            insertAtPosition(data,newIdx);
+
+            //need to undo twice because the two previous methods add to the undo queue
+            storeCommand(function(){
+                undo();
+                undo();
+            });
+        },
 
         cycle:function(cb){
             var current = head;
@@ -246,7 +318,7 @@ function DoubleLinkedList(){
         toArray:function(){
             var array = [];
             var current = head;
-            for(var i = 0; i< size; i++){
+            while(current){
                 array.push(current.getProtectedData());
                 current = current.getNext();
             }
@@ -282,6 +354,7 @@ function DoubleLinkedList(){
         }
     };
 }
+
 
 if(typeof module !== 'undefined' && this.module !== module && module.exports)
     module.exports = DoubleLinkedList;
