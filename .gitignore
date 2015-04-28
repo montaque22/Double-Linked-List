@@ -7,3 +7,6 @@
 .idea/scopes/scope_settings.xml
 
 .idea/misc.xml
+
+node_modules/
+tests/node_modules

@@ -24,7 +24,7 @@ function DoubleLinkedList(){
      Needed to operate the undo functions
      */
     function storeCommand(curriedCommand){
-        shouldStoreCommand && undoCommandList.add(curriedCommand);
+        shouldStoreCommand && undoCommandList.push(curriedCommand);
         for(var i = 0;i < onChangeList.length;i++){
             onChangeList[i]();
         }
@@ -45,6 +45,7 @@ function DoubleLinkedList(){
      These need to be in the main object scope as they refer to each other.
      */
     function deleteAtPosition(position){
+        position = (isNaN(position) || position < 0) ? 0 : position;
         var current = null;
         // There is nothing to remove
         if(size === 0){
@@ -93,7 +94,7 @@ function DoubleLinkedList(){
     }
 
     function insertAtPosition(data, position){
-
+        position = (isNaN(position) || position < 0) ? 0 : position;
         var node = new Node(data);
 
         // Inserting at the beginning
@@ -174,10 +175,13 @@ function DoubleLinkedList(){
 
         this.setData = function(data){
             if(data){
-                Object.keys(data, function(key, val){
-                    _this[key] = val;
-                });
+                var keys =  Object.keys(data);
+                for(var i = 0;i < keys.length;i++){
+                    var key = keys[i];
+                    _this[key] = data[key];
+                }
             }
+
             _this.getProtectedData = function(){
                 return data;
             }
@@ -213,7 +217,7 @@ function DoubleLinkedList(){
      */
     return {
         onChange:function(func){
-            typeof func === 'function' && onChangeList.add(func);
+            typeof func === 'function' && onChangeList.push(func);
         },
         canUndo:function(){
             return undoCommandList.length > 0
@@ -250,7 +254,7 @@ function DoubleLinkedList(){
             var undoItAll = [];
             for(;counter > 0;counter--){
                 deleteAtPosition(0);
-                undoItAll.add(undo)
+                undoItAll.push(undo)
             }
             storeCommand(function(){
                 for(var i = 0; i < undoItAll.length;i++){
