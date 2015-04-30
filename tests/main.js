@@ -1,19 +1,79 @@
 /**
  * Created by mmontaque on 4/28/15.
  */
-var list = new DoubleLinkedList();
+var dll = new DoubleLinkedList();
+var arr = [];
+var data = "talk";
+var max = 1000000;
 
-list.insertAtEnd({id:1})
-list.insertAtEnd({id:1, name: 'Beth'});
-list.insertAtEnd({id:2, name: 'Joe'});
-list.insertAtEnd({id:3, name: 'sly'});
-list.insertAtEnd({id:4, name: 'kenny'});
-list.insertAtEnd({id:5, name: 'sly'});
+function insertAtEndSpeed(){
+    dll.deleteAll();
+    arr = [];
 
-list.insertAtPosition({id:1});
-list.insertAtPosition({id:3},2);
-list.insertAtPosition({id:2},1);
+    var start = new Date().getTime();
+    for(var i = 0; i < max; i++){
+        dll.insertAtEnd(data);
+    }
 
-var array = list.findAll({id:1});
-console.log(list.toArray())
-console.log(array)
+    var elapsed = new Date().getTime() - start;
+
+    console.log("Double Linked List Time: "+ elapsed)
+
+    var start = new Date().getTime();
+    for(var i = 0; i < max; i++){
+        arr.push(data);
+    }
+    var elapsed = new Date().getTime() - start;
+
+    console.log("Native Array Time: "+ elapsed)
+
+}
+
+function insertAtStartSpeed(){
+    dll.deleteAll();
+    arr = [];
+
+    var start = new Date().getTime();
+    for(var i = 0; i < max; i++){
+        dll.insertAtStart(data);
+    }
+
+    var elapsed = new Date().getTime() - start;
+
+    console.log("Double Linked List Time: "+ elapsed)
+
+    var start = new Date().getTime();
+    for(var i = 0; i < max; i++){
+        arr.unshift(data);
+    }
+    var elapsed = new Date().getTime() - start;
+
+    console.log("Native Array Time: "+ elapsed)
+
+}
+
+
+function insertAtPositionSpeed(){
+    dll.deleteAll();
+    arr = [];
+    var mid = Math.ceil(max/2);
+    for(var i = 0; i < max; i++){
+        dll.insertAtStart(data);
+        arr.push(data);
+    }
+
+
+    var start = new Date().getTime();
+    dll.insertAtPosition(data,mid)
+    var elapsed = new Date().getTime() - start;
+
+    console.log("Double Linked List Time: "+ elapsed);
+
+    var start = new Date().getTime();
+    arr.splice(mid, 0, data);
+    var elapsed = new Date().getTime() - start;
+
+    console.log("Native Array Time: "+ elapsed)
+
+}
+

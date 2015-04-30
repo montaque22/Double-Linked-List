@@ -2,14 +2,8 @@
 /**
  @author Michael Montaque
  @description Double Linked List
- Ability to store data in a double linked list.
- Some notable features  includes:
- - undo: undo adding or deleting nodes
- - toArray: returns data in each node as an array
- - cycle: enumerates through all the nodes
- - findAll: finds all the node matching the comparator or object
+ @class
  */
-
 function DoubleLinkedList(){
     var tail;
     var head;
@@ -53,7 +47,7 @@ function DoubleLinkedList(){
         }
 
         // Remove Item from the beginning
-        else if(position === 0){
+        else if(position <= 0){
             current = head;
             head = head.getNext();
             head && head.setPrevious(null);
@@ -66,7 +60,7 @@ function DoubleLinkedList(){
         }
 
         // Remove item from the end
-        else if(position === size - 1){
+        else if(position >= size - 1){
             current = tail;
             tail =  tail.getPrevious();
             tail && tail.setNext(null);
@@ -98,7 +92,7 @@ function DoubleLinkedList(){
         var node = new Node(data);
 
         // Inserting at the beginning
-        if(position === 0){
+        if(position <= 0){
             if(!head){
                 tail = head = node;
             }else{
@@ -157,16 +151,61 @@ function DoubleLinkedList(){
         size++;
     }
 
+    function findAll(comparitor){
+        var list = [];
+
+        // Search for nodes using the function comparitor that the user passed in
+        if(typeof comparitor === 'function'){
+            cycle(function(node){
+                comparitor(node) && list.push(node);
+            });
+        }
+
+        // Search for nodes using the object to compare against
+        else if(typeof comparitor === 'object'){
+            list = findAll(function(node){
+                var isMatch = true;
+                var keys = Object.keys(comparitor);
+                for(var i = 0 ;i < keys.length; i++){
+                    var key = keys[i];
+                    if (node[key] !== comparitor[key]){
+                        isMatch = false;
+                        break;
+                    }
+                }
+                return isMatch;
+            });
+        }
+        return list;
+    };
+
     function undo(){
         shouldStoreCommand = false;
         var method = undoCommandList.pop();
         typeof method === 'function' && method();
         shouldStoreCommand = true;
-    }
+    };
 
+    function cycle(cb, isReversed){
+        if(typeof cb === 'function'){
+            var current = isReversed ? tail : head;
+            var idx = isReversed ? size - 1 : 0;
+            while(current && cb(current, idx) === undefined){
+                current = isReversed ? current.getPrevious() : current.getNext();
+                idx += isReversed ? -1 : 1;
+            }
+        }
+    };
 
-    /*
-     NODE CLASS: These will be chain together
+    /**
+     * @name Node
+     * @inner
+     * @class
+     * @description class that represents the nodes that make up the list. Each of the node are referenced to at most
+     * two other nodes - a previous and a next.
+     * @param data - any object to store
+     * @param nextNode - a node to reference as next
+     * @param previousNode - a node to reference as previous
      */
     function Node(data, nextNode, previousNode){
         var prev;
@@ -181,11 +220,10 @@ function DoubleLinkedList(){
                     _this[key] = data[key];
                 }
             }
-
-            _this.getProtectedData = function(){
-                return data;
-            }
         };
+        this.getProtectedData = function(){
+            return data;
+        }
         this.hasNext = function(){
             return _this.getNext() !== undefined;
         }
@@ -215,93 +253,223 @@ function DoubleLinkedList(){
     /*
      ------ METHODS AVAILABLE TO THE USER ------
      */
+    /**
+     * @lends DoubleLinkedList
+     */
     return {
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description Will trigger all the functions given to it when objects are added, removed or moved.
+         * @param func {function} function to call when a change occurs
+         */
         onChange:function(func){
             typeof func === 'function' && onChangeList.push(func);
         },
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description determines if there are any more undo left
+         * @returns {boolean}
+         */
         canUndo:function(){
             return undoCommandList.length > 0
         },
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description will undo the last modifying command
+         */
         undo:undo,
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description removes all the undo that the user can perform
+         */
         clearUndo:function(){
             undoCommandList = [];
         },
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description is this data list empty?
+         * @returns {boolean}
+         */
         isEmpty:function(){
             return head === null || head === undefined;
         },
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description Returns the size of this list
+         * @returns {Number}
+         */
         getSize:function(){
             return size;
         },
 
+        /**
+         * @function
+         * @memberof DoubleLinkedList
+         * @instance
+         * @description Inserts data at the end of the list
+         * @summary
+         * Speed indicated that this method was far superior than the native array at with greater data
+         * With 10000 small objects the native array was slightly faster by 3ms
+         * With 100000 small object the double linked list more than 2x's faster.
+         * With 1000000 small object the double linked list more than ~100x's faster.
+         * @param data {Object | Array} - Data to store into the array
+         */
         insertAtStart:function(data){
             insertAtPosition(data,0);
-
         },
 
+        /**
+         * @function
+         * @memberof DoubleLinkedList
+         * @instance
+         * @description Inserts data at the end of the list
+         * @summary
+         * Speed indicated that this method was extremely slow in comparison to the native array
+         * With 100000 small objects the native array was 12x's faster
+         * With 1000000 small object the native array was 6x's faster
+         * @param data {Object | Array} - Data to store into the array
+         */
         insertAtEnd:function(data){
             insertAtPosition(data,size);
         },
 
+        /**
+         * @function
+         * @memberof DoubleLinkedList
+         * @instance
+         * @description Inserts data at the end of the list
+         * @summary
+         * Speed indicated that this method was comparable to the native array
+         * With 1000 small objects both were equal
+         * With 100000 small object the double linked list was slightly slower by ms
+         * With 1000000 small object the double linked list was still a little slower by about 30ms
+         * @param data {Object | Array} - Data to store into the array
+         */
         insertAtPosition:insertAtPosition,
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description removes a node at the specified position
+         * @param position {Number} index of the node you want to remove
+         */
         deleteAtPosition:deleteAtPosition,
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description removes all the nodes
+         */
         deleteAll:function(){
-            var counter = size;
-            var undoItAll = [];
-            for(;counter > 0;counter--){
-                deleteAtPosition(0);
-                undoItAll.push(undo)
-            }
-            storeCommand(function(){
-                for(var i = 0; i < undoItAll.length;i++){
-                    undoItAll[i]();
+
+            if(size){
+                var counter = size;
+                var undoItAll = [];
+                for(;counter > 0;counter--){
+                    deleteAtPosition(0);
+                    undoItAll.push(undo)
                 }
-            });
+                storeCommand(function(){
+                    for(var i = 0; i < undoItAll.length;i++){
+                        undoItAll[i]();
+                    }
+                });
+            }
+
         },
 
+        /**
+         *
+         * @callback Comparitor
+         * @param {Object} node - object in the list
+         * @param {Number} idx - index of the object in the list
+         * @return {boolean} the user should return true any time a condition is met while comparing the node
+         */
+
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description removes a node at the specified position
+         * @param {Comparitor} comparitor - function that cycles through each element
+         * returning the node and index. The user must return true or false to indicate whether or not the
+         * node should be removed.
+         * @param isReversed {Boolean} to cycle through the list in reverse
+         * @example
+         * list.removeNode(function(node, idx){
+         *      return node.id === 4
+         * },true)
+         */
         removeNode:function(comparitor, isReversed){
-            var current = isReversed ? tail : head;
 
-            if(isReversed){
-                for(var i = size - 1 ; i >= 0; i--){
-                    if(comparitor(current)){
-                        deleteAtPosition(i);
-                        break;
-                    }
-                    current = current.getPrevious();
-                }
-            }else{
-                for(var i = 0; i < size; i++){
-                    if(comparitor(current)){
-                        deleteAtPosition(i);
-                        break;
-                    }
-                    current = current.getNext();
-                }
-            }
+            cycle(function(node, idx){
+                return comparitor(node) &&
+                    (function(){deleteAtPosition(idx); return true;})()
+            }, isReversed);
+
         },
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @return {Object} the node at the end of the list
+         */
         getTail:function(){return tail;},
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @return {Object} the node at the start of the list
+         */
         getHead:function(){return head;},
 
+
+        /**
+         * @todo optimize (Method is brute force)
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description moves the object
+         * @param {Number} oldIdx - the index of the object you want to move
+         * @param {Number} newIdx - the index you want to move the old object to
+         */
         move:function(oldIdx, newIdx){
+
             //if invalid Number, leave
             if(oldIdx === newIdx || oldIdx < 0 || newIdx < 0 || isNaN(oldIdx) || isNaN(newIdx)){
                 return
             }
-            var counter = 0;
-            var current = head;
 
-            for(var counter = 0;counter < oldIdx;counter++){
-                current = current.getNext();
-            }
+            var current = null;
+
+            cycle(function(node, idx){
+                current = node;
+                return idx === oldIdx;
+            });
+
             var data =  current.getProtectedData();
+
             deleteAtPosition(oldIdx);
+
             insertAtPosition(data,newIdx);
 
             //need to undo twice because the two previous methods add to the undo queue
@@ -311,51 +479,62 @@ function DoubleLinkedList(){
             });
         },
 
-        cycle:function(cb){
-            var current = head;
-            for(var i = 0; i< size; i++){
-                cb(current, i);
-                current = current.getNext();
-            }
-        },
+        /**
+         *
+         * @callback Callback
+         * @param {Object} node - object in the list
+         * @param {Number} idx - index of the object in the list
+         * @return {boolean} Optionally the user can return false to break free from the cycle early
+         */
 
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description cycles through each node and returns it along with the index to the callback
+         * To break free from the cycle the user can return false.
+         * @param {Callback} callback - function that cycles through each element
+         * returning the node and index.
+         * @param isReversed {Boolean} to cycle through the list in reverse
+         * @example
+         * list.cycle(function(node, idx){
+         *      // Do something with the node
+         * })
+         */
+        cycle:cycle,
+
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description returns an array of the data
+         * @return {Array} the internal data as an array
+         */
         toArray:function(){
             var array = [];
-            var current = head;
-            while(current){
-                array.push(current.getProtectedData());
-                current = current.getNext();
-            }
+            cycle(function(node){
+                array.push(node.getProtectedData());
+            });
             return array;
         },
 
-        findAll:function(comparitor){
-            var list = [];
-
-            // Search for nodes using the function comparitor that the user passed in
-            if(typeof comparitor === 'function'){
-                this.cycle(function(node){
-                    comparitor(node) && list.push(node);
-                });
-            }
-
-            // Search for nodes using the object to compare against
-            else if(typeof comparitor === 'object'){
-                list = this.findAll(function(node){
-                    var isMatch = true;
-                    var keys = Object.keys(comparitor);
-                    for(var i = 0 ;i < keys.length; i++){
-                        var key = keys[i];
-                        if (node[key] !== comparitor[key]){
-                            isMatch = false;
-                            break;
-                        }
-                    }
-                    return isMatch;
-                });
-            }
-            return list;
-        }
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description removes a node at the specified position
+         * @param {Comparitor | Object} comparitor - function that cycles through each element
+         * returning the node and index. The user must return true or false to indicate whether or not the
+         * node should be removed. Or it can be an object and the method will find any node that matches the attribute's
+         * data
+         * @example
+         * var array = list.findAll(function(node, idx){
+         *      return node.id === 4
+         * })
+         *
+         * var list = list.findAll({id:4})
+         */
+        findAll:findAll
     };
 }
 

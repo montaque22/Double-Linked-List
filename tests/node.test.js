@@ -27,7 +27,7 @@ describe('Double Linked List', function(){
         })
     })
 
-    describe('#undo', function(){
+    describe('#undo - Add', function(){
         it('Should return null after undo an add', function(){
             var data =  {id:1};
             var list = new DoubleLinkedList();
@@ -36,6 +36,89 @@ describe('Double Linked List', function(){
 
             assert.equal(null, list.getHead());
             assert.equal(null, list.getTail());
+        })
+    })
+
+    describe('#undo - Delete', function(){
+        it('Should return an object with id = 1 after deleting it', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+            list.insertAtStart(data);
+            list.deleteAtPosition(0);
+            list.undo();
+
+            assert.deepEqual({id:1}, list.getHead().getProtectedData());
+
+        })
+    })
+
+    describe('#canUndo - Add', function(){
+        it('Should equal true after add', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.insertAtStart(data);
+            assert.equal(true, list.canUndo());
+
+        })
+    })
+
+    describe('#canUndo - Move', function(){
+        it('Should equal true after move', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.insertAtStart(data);
+            list.insertAtStart({id:2});
+            list.clearUndo();
+            list.move(1,0);
+            assert.equal(true, list.canUndo());
+        })
+    })
+
+    describe('#canUndo - Delete', function(){
+        it('Should equal true after delete but false after delete from an empty list', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.insertAtStart(data);
+            list.clearUndo();
+            list.deleteAtPosition(0);
+            assert.equal(true, list.canUndo());
+
+            list.undo()
+
+        })
+    })
+
+    describe('#canUndo - DeleteAll', function(){
+        it('Should equal false after deleting from an empty list but true after deleting from a list with a value', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.deleteAll();
+            assert.equal(false, list.canUndo());
+
+            list.insertAtStart(data);
+            list.clearUndo();
+            list.deleteAll();
+            assert.equal(true, list.canUndo());
+
+        })
+    })
+
+    describe('#canUndo - Clear', function(){
+        it('Should equal after inserting an item in the list or when executing it on an empty queue', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.insertAtStart(data);
+            list.clearUndo();
+            assert.equal(false, list.canUndo());
+
+            list.clearUndo();
+            assert.equal(false, list.canUndo());
+
         })
     })
 
@@ -78,6 +161,23 @@ describe('Double Linked List', function(){
         })
     })
 
+    describe('#insertAtPosition - out of bounds', function(){
+        it('Should return 1 for the Head and 2 for the tail', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.insertAtPosition({id:3});
+            list.insertAtPosition({id:1},-10);
+            list.insertAtPosition({id:2},100);
+
+            var node = list.getHead();
+
+            assert.equal(1, node.id);
+            assert.equal(3, node.getNext().id);
+            assert.equal(2, node.getNext().getNext().id);
+        })
+    })
+
     describe('#deleteAtPosition', function(){
         it('First node should be 1 and the last node should be 3', function(){
             var data =  {id:1};
@@ -93,6 +193,25 @@ describe('Double Linked List', function(){
             assert.equal(1, node.id);
             assert.equal(3, node.getNext().id);
             assert.equal(null, node.getNext().getNext());
+        })
+    })
+
+    describe('#deleteAtPosition - Out of Bounds', function(){
+        it('Only the node with id 3 should be left', function(){
+            var data =  {id:1};
+            var list = new DoubleLinkedList();
+
+            list.insertAtPosition({id:1});
+            list.insertAtPosition({id:3},1);
+            list.insertAtPosition({id:2},1);
+
+            list.deleteAtPosition(10);
+            list.deleteAtPosition(-10);
+            var node = list.getHead();
+
+            assert.equal(2, node.id);
+            assert.equal(1, list.getSize());
+
         })
     })
 
@@ -240,6 +359,79 @@ describe('Double Linked List', function(){
             assert.deepEqual({id:3, name: 'sly'}, array[0].getProtectedData());
             assert.deepEqual({id:5, name: 'sly'}, array[1].getProtectedData());
 
+        })
+    })
+
+    describe('#cycle - Forward', function(){
+        it('Should Return 5 for reaching the top', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+          var c1 = 0;
+
+            list.cycle(function(node, idx){
+                c1 = node.id;
+            })
+
+            assert.equal(5, c1);
+
+        })
+    })
+
+    describe('#cycle - Reversed', function(){
+        it('Should Return reaching 0', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+
+            var c2 = 0;
+
+
+
+            list.cycle(function(node, idx){
+                c2 = node.id
+            },true);
+
+
+            assert.equal(1, c2);
+
+        })
+    })
+
+    describe('#cycle - Cancelled', function(){
+        it('Should Return 3 after cancelling midway', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+            var c3 = 0;
+
+            list.cycle(function(node, idx){
+                if(idx === 2){
+                    c3 = node.id;
+                    return true;
+                }
+                c3 = 0;
+            })
+
+            assert.equal(3, c3);
         })
     })
 })
