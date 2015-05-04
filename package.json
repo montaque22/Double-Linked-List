@@ -1,6 +1,6 @@
 {
   "name": "double-linkedlist",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A double linked list data structure for storing data",
   "main": "doubleLinkList.js",
   "scripts": {

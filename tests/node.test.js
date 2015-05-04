@@ -362,8 +362,8 @@ describe('Double Linked List', function(){
         })
     })
 
-    describe('#cycle - Forward', function(){
-        it('Should Return 5 for reaching the top', function(){
+    describe('#cycle - Forward Implicit', function(){
+        it('Should Return 1 after stopping at the first point due to implicity return of undefined', function(){
 
             var list = new DoubleLinkedList();
 
@@ -377,6 +377,29 @@ describe('Double Linked List', function(){
 
             list.cycle(function(node, idx){
                 c1 = node.id;
+            })
+
+            assert.equal(1, c1);
+
+        })
+    })
+
+    describe('#cycle - Forward explicit', function(){
+        it('Should Return 5 for reaching the top And explicitly passing true', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+            var c1 = 0;
+
+            list.cycle(function(node, idx){
+                c1 = node.id;
+                return true;
             })
 
             assert.equal(5, c1);
@@ -402,6 +425,7 @@ describe('Double Linked List', function(){
 
             list.cycle(function(node, idx){
                 c2 = node.id
+                return true;
             },true);
 
 
@@ -426,9 +450,10 @@ describe('Double Linked List', function(){
             list.cycle(function(node, idx){
                 if(idx === 2){
                     c3 = node.id;
-                    return true;
+                    return false;
                 }
                 c3 = 0;
+                return true;
             })
 
             assert.equal(3, c3);

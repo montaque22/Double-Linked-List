@@ -158,6 +158,7 @@ function DoubleLinkedList(){
         if(typeof comparitor === 'function'){
             cycle(function(node){
                 comparitor(node) && list.push(node);
+                return true;
             });
         }
 
@@ -190,7 +191,9 @@ function DoubleLinkedList(){
         if(typeof cb === 'function'){
             var current = isReversed ? tail : head;
             var idx = isReversed ? size - 1 : 0;
-            while(current && cb(current, idx) === undefined){
+            var shouldContinue = true;
+            while(current && shouldContinue){
+                shouldContinue = cb(current, idx);
                 current = isReversed ? current.getPrevious() : current.getNext();
                 idx += isReversed ? -1 : 1;
             }
@@ -420,8 +423,8 @@ function DoubleLinkedList(){
         removeNode:function(comparitor, isReversed){
 
             cycle(function(node, idx){
-                return comparitor(node) &&
-                    (function(){deleteAtPosition(idx); return true;})()
+               var shouldStop =  comparitor(node) && (function(){deleteAtPosition(idx); return true;})();
+                return !shouldStop;
             }, isReversed);
 
         },
@@ -463,7 +466,7 @@ function DoubleLinkedList(){
 
             cycle(function(node, idx){
                 current = node;
-                return idx === oldIdx;
+                return idx !== oldIdx;
             });
 
             var data =  current.getProtectedData();
@@ -514,6 +517,7 @@ function DoubleLinkedList(){
             var array = [];
             cycle(function(node){
                 array.push(node.getProtectedData());
+                return true;
             });
             return array;
         },

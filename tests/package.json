@@ -9,6 +9,6 @@
   "author": "michael montaque",
   "license": "ISC",
   "devDependencies": {
-    "double-linkedlist": "0.0.3"
+    "double-linkedlist": "0.0.6"
   }
 }

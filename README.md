@@ -262,3 +262,8 @@ two other nodes - a previous and a next.
 | nextNode | a node to reference as next |
 | previousNode | a node to reference as previous |
 
+
+## Version 0.0.6
+### Bug Fixes:
+* Fixed cycle to require true to be explicitly returned to make the cycle continue.
+* Fixed the Move method to properly rearrange the the nodes 
