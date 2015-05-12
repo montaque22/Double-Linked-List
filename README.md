@@ -263,7 +263,15 @@ two other nodes - a previous and a next.
 | previousNode | a node to reference as previous |
 
 
-## Version 0.0.6
-### Bug Fixes:
+## Change Log
+
+### Version 0.0.6
+#### Bug Fixes:
 * Fixed cycle to require true to be explicitly returned to make the cycle continue.
 * Fixed the Move method to properly rearrange the the nodes 
+
+### Version 0.0.7
+#### Bug Fixes:
+* Fixed issue where adding attributes to the Node object via the dot notation did not propagate properly by restricting 
+alterations to the inner node class attributes through only 4 methods: setData, getDataForKey, appendData & 
+getProtectedData;

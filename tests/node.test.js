@@ -128,8 +128,8 @@ describe('Double Linked List', function(){
             list.insertAtStart({id:1});
             list.insertAtStart({id:2});
 
-            assert.equal(2, list.getHead().id);
-            assert.equal(1, list.getTail().id);
+            assert.equal(2, list.getHead().getDataForKey('id'));
+            assert.equal(1, list.getTail().getDataForKey('id'));
         })
     })
 
@@ -139,8 +139,8 @@ describe('Double Linked List', function(){
             list.insertAtEnd({id:1});
             list.insertAtEnd({id:2});
 
-            assert.equal(1, list.getHead().id);
-            assert.equal(2, list.getTail().id);
+            assert.equal(1, list.getHead().getDataForKey('id'));
+            assert.equal(2, list.getTail().getDataForKey('id'));
         })
     })
 
@@ -155,9 +155,9 @@ describe('Double Linked List', function(){
 
             var node = list.getHead();
 
-            assert.equal(1, node.id);
-            assert.equal(2, node.getNext().id);
-            assert.equal(3, node.getNext().getNext().id);
+            assert.equal(1, node.getDataForKey('id'));
+            assert.equal(2, node.getNext().getDataForKey('id'));
+            assert.equal(3, node.getNext().getNext().getDataForKey('id'));
         })
     })
 
@@ -172,9 +172,9 @@ describe('Double Linked List', function(){
 
             var node = list.getHead();
 
-            assert.equal(1, node.id);
-            assert.equal(3, node.getNext().id);
-            assert.equal(2, node.getNext().getNext().id);
+            assert.equal(1, node.getDataForKey('id'));
+            assert.equal(3, node.getNext().getDataForKey('id'));
+            assert.equal(2, node.getNext().getNext().getDataForKey('id'));
         })
     })
 
@@ -190,8 +190,8 @@ describe('Double Linked List', function(){
             list.deleteAtPosition(1);
             var node = list.getHead();
 
-            assert.equal(1, node.id);
-            assert.equal(3, node.getNext().id);
+            assert.equal(1, node.getDataForKey('id'));
+            assert.equal(3, node.getNext().getDataForKey('id'));
             assert.equal(null, node.getNext().getNext());
         })
     })
@@ -209,7 +209,7 @@ describe('Double Linked List', function(){
             list.deleteAtPosition(-10);
             var node = list.getHead();
 
-            assert.equal(2, node.id);
+            assert.equal(2, node.getDataForKey('id'));
             assert.equal(1, list.getSize());
 
         })
@@ -247,15 +247,15 @@ describe('Double Linked List', function(){
             list.insertAtEnd({id:1});
 
             list.removeNode(function(node){
-                return node.id === 1;
+                return node.getDataForKey('id') === 1;
             });
 
             var node = list.getHead();
 
-            assert.equal(2, node.id);
-            assert.equal(3, node.getNext().id);
-            assert.equal(1, node.getNext().getNext().id);
-            //assert.equal(3, node.getNext().getNext().getNext().id);
+            assert.equal(2, node.getDataForKey('id'));
+            assert.equal(3, node.getNext().getDataForKey('id'));
+            assert.equal(1, node.getNext().getNext().getDataForKey('id'));
+            //assert.equal(3, node.getNext().getNext().getNext().getDataForKey('id'));
         })
     })
 
@@ -270,15 +270,15 @@ describe('Double Linked List', function(){
             list.insertAtEnd({id:1});
 
             list.removeNode(function(node){
-                return node.id === 1;
+                return node.getDataForKey('id') === 1;
             },true);
 
             var node = list.getHead();
 
-            assert.equal(1, node.id);
-            assert.equal(2, node.getNext().id);
-            assert.equal(3, node.getNext().getNext().id);
-            //assert.equal(3, node.getNext().getNext().getNext().id);
+            assert.equal(1, node.getDataForKey('id'));
+            assert.equal(2, node.getNext().getDataForKey('id'));
+            assert.equal(3, node.getNext().getNext().getDataForKey('id'));
+            //assert.equal(3, node.getNext().getNext().getNext().getDataForKey('id'));
         })
     })
 
@@ -296,10 +296,10 @@ describe('Double Linked List', function(){
 
             var node = list.getHead();
 
-            assert.equal(1, node.id);
-            assert.equal(1, node.getNext().id);
-            assert.equal(2, node.getNext().getNext().id);
-            assert.equal(3, node.getNext().getNext().getNext().id);
+            assert.equal(1, node.getDataForKey('id'));
+            assert.equal(1, node.getNext().getDataForKey('id'));
+            assert.equal(2, node.getNext().getNext().getDataForKey('id'));
+            assert.equal(3, node.getNext().getNext().getNext().getDataForKey('id'));
         })
     })
 
@@ -332,7 +332,7 @@ describe('Double Linked List', function(){
             list.insertAtEnd({id:4, name: 'kenny'});
 
             var array = list.findAll(function(node){
-                return node.id % 2  === 0 // Find all Even Ids
+                return node.getDataForKey('id') % 2  === 0 // Find all Even Ids
             });
 
 
@@ -376,7 +376,7 @@ describe('Double Linked List', function(){
           var c1 = 0;
 
             list.cycle(function(node, idx){
-                c1 = node.id;
+                c1 = node.getDataForKey('id');
             })
 
             assert.equal(1, c1);
@@ -398,7 +398,7 @@ describe('Double Linked List', function(){
             var c1 = 0;
 
             list.cycle(function(node, idx){
-                c1 = node.id;
+                c1 = node.getDataForKey('id');
                 return true;
             })
 
@@ -424,7 +424,7 @@ describe('Double Linked List', function(){
 
 
             list.cycle(function(node, idx){
-                c2 = node.id
+                c2 = node.getDataForKey('id')
                 return true;
             },true);
 
@@ -449,7 +449,7 @@ describe('Double Linked List', function(){
 
             list.cycle(function(node, idx){
                 if(idx === 2){
-                    c3 = node.id;
+                    c3 = node.getDataForKey('id');
                     return false;
                 }
                 c3 = 0;
@@ -457,6 +457,36 @@ describe('Double Linked List', function(){
             })
 
             assert.equal(3, c3);
+        })
+    })
+
+    describe('#Verify Data Change- Dot Notation', function(){
+        it('Should Return true when trying to access manually but returns undefined when accessed via getter', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.getHead().invisibleData = true;
+
+            assert.equal(true, list.getHead().invisibleData);
+            assert.equal(undefined, list.getHead().getDataForKey('invisibleData'));
+            assert.equal(undefined, list.getHead().getProtectedData()['invisibleData']);
+            assert.equal(undefined, list.toArray()[0]['invisibleData']);
+        })
+    })
+
+    describe('#Verify Data Change- Setter', function(){
+        it('Should Return true when trying to access manually but returns undefined when accessed via getter', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.getHead().appendData(true,'invisibleData');
+
+            assert.equal(undefined, list.getHead().invisibleData);
+            assert.equal(true, list.getHead().getDataForKey('invisibleData'));
+            assert.equal(true, list.getHead().getProtectedData()['invisibleData']);
+            assert.equal(true, list.toArray()[0]['invisibleData']);
         })
     })
 })

@@ -169,7 +169,7 @@ function DoubleLinkedList(){
                 var keys = Object.keys(comparitor);
                 for(var i = 0 ;i < keys.length; i++){
                     var key = keys[i];
-                    if (node[key] !== comparitor[key]){
+                    if (node.getDataForKey(key) !== comparitor[key]){
                         isMatch = false;
                         break;
                     }
@@ -204,6 +204,7 @@ function DoubleLinkedList(){
      * @name Node
      * @inner
      * @class
+     * todo seal the default methods but allow object to be extensible
      * @description class that represents the nodes that make up the list. Each of the node are referenced to at most
      * two other nodes - a previous and a next.
      * @param data - any object to store
@@ -214,18 +215,21 @@ function DoubleLinkedList(){
         var prev;
         var next;
         var _this = this;
-
+        var localData = data;
         this.setData = function(data){
-            if(data){
-                var keys =  Object.keys(data);
-                for(var i = 0;i < keys.length;i++){
-                    var key = keys[i];
-                    _this[key] = data[key];
-                }
-            }
+            localData = data;
         };
+
+        this.getDataForKey = function(key){
+            return localData[key];
+        };
+
+        this.appendData = function(data, key){
+            localData[key] = data;
+        };
+
         this.getProtectedData = function(){
-            return data;
+            return localData;
         }
         this.hasNext = function(){
             return _this.getNext() !== undefined;
@@ -247,7 +251,6 @@ function DoubleLinkedList(){
             return prev;
         };
 
-        this.setData(data);
         this.setNext(nextNode);
         this.setPrevious(previousNode);
 
