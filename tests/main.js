@@ -3,8 +3,8 @@
  */
 var dll = new DoubleLinkedList();
 var arr = [];
-var data = "talk";
-var max = 1000000;
+var data = {kid:1};
+var max = 10000;
 
 function insertAtEndSpeed(){
     dll.deleteAll();

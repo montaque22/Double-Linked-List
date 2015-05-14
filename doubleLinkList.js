@@ -24,6 +24,7 @@ function DoubleLinkedList(){
         }
     }
 
+
     function wrapper(method){
         return function(){
             var args =  arguments;
@@ -84,7 +85,7 @@ function DoubleLinkedList(){
             }
         }
 
-        storeCommand(wrapper(insertAtPosition)(current.getProtectedData(),position));
+        storeCommand(wrapper(insertAtPosition)(current.getData(),position));
     }
 
     function insertAtPosition(data, position){
@@ -212,48 +213,152 @@ function DoubleLinkedList(){
      * @param previousNode - a node to reference as previous
      */
     function Node(data, nextNode, previousNode){
-        var prev;
-        var next;
-        var _this = this;
-        var localData = data;
-        this.setData = function(data){
-            localData = data;
+        if(typeof data != 'object'){
+            throw 'Invalid data. Double Linked List can only take an object as a parameter not a ' + typeof data;
+        }
+
+        var prev = previousNode;
+        var next = nextNode;
+        var node = Object.create(data,{
+            getNext:{value:getNext},
+            getPrevious:{value:getPrevious},
+            setNext:{value:setNext},
+            setPrevious:{value:setPrevious},
+            hasNext:{value:hasNext},
+            hasPrev:{value:hasPrev},
+            getProtectedData:{value:getProtectedData},
+            getData:{value:getData},
+            appendData:{value:appendData},
+            getDataForKey:{value:getDataForKey},
+            setData:{value:setData}
+        });
+
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description sets the internal data object
+         * @param {Object} data - the information you want to store the node
+         */
+        function setData (data){
+            for(var property in data){
+                this[property] = data[property];
+            }
         };
 
-        this.getDataForKey = function(key){
-            return localData[key];
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description getter for the internal data stored in the node
+         * @param {String} key - the attribute property name to access the data
+         */
+        function getDataForKey (key){
+            return this[key];
         };
 
-        this.appendData = function(data, key){
-            localData[key] = data;
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description allows you to set data in the internal object.
+         * @param {Object} data - the information you want to store the node
+         * @param {String} key - the property you want to store the data at
+         */
+        function appendData (data, key){
+            this[key] = data;
         };
 
-        this.getProtectedData = function(){
-            return localData;
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @deprecated Will be removed by version 1.0.0. (Please use the getData data method instead)
+         * @return Object
+         */
+        function getProtectedData (){
+            console.error("Deprecated: Please use getData method instead")
+            return getData()
         }
-        this.hasNext = function(){
-            return _this.getNext() !== undefined;
+
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description Returns the data that was passed into the object (or added) by the user
+         * @return Object
+         */
+        function getData (){
+            var data = {};
+            for(var property in this){
+                data[property] = this[property];
+            }
+            return data;
         }
-        this.hasPrev = function(){
-            return _this.getPrevious() !== undefined;
+
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description true if there is another node linked after the node that is caller of this method
+         * @return Boolean
+         */
+        function hasNext (){
+            return getNext() !== undefined;
         }
-        this.setNext = function(obj){
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description true if there is another node linked before the node that is caller of this method
+         * @return Boolean
+         */
+        function hasPrev (){
+            return getPrevious() !== undefined;
+        }
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description takes a node object and sets it as the next node in the linked list
+         * @param {Node} obj - the node object you want to set as next
+         */
+        function setNext (obj){
             next = obj;
         }
-        this.setPrevious = function(obj){
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description takes a node object and sets it as the previous node in the linked list
+         * @param {Node} obj - the node object you want to set as previous
+         */
+        function setPrevious (obj){
             prev = obj;
         }
 
-        this.getNext = function(){
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description returns the node that is after the node that called this method
+         * @return Node
+         */
+        function getNext (){
             return next;
         };
-        this.getPrevious = function(){
+        /**
+         * @function
+         * @instance
+         * @memberof Node
+         * @description returns the node that is before the node that called this method
+         * @return Node
+         */
+        function getPrevious (){
             return prev;
         };
 
-        this.setNext(nextNode);
-        this.setPrevious(previousNode);
-
+        return node;
     }
 
     /*
@@ -329,10 +434,8 @@ function DoubleLinkedList(){
          * @instance
          * @description Inserts data at the end of the list
          * @summary
-         * Speed indicated that this method was far superior than the native array at with greater data
-         * With 10000 small objects the native array was slightly faster by 3ms
-         * With 100000 small object the double linked list more than 2x's faster.
-         * With 1000000 small object the double linked list more than ~100x's faster.
+         * This method is may be faster than the browser's native array
+         * in placing an object at the beginning of the array
          * @param data {Object | Array} - Data to store into the array
          */
         insertAtStart:function(data){
@@ -344,10 +447,6 @@ function DoubleLinkedList(){
          * @memberof DoubleLinkedList
          * @instance
          * @description Inserts data at the end of the list
-         * @summary
-         * Speed indicated that this method was extremely slow in comparison to the native array
-         * With 100000 small objects the native array was 12x's faster
-         * With 1000000 small object the native array was 6x's faster
          * @param data {Object | Array} - Data to store into the array
          */
         insertAtEnd:function(data){
@@ -359,11 +458,6 @@ function DoubleLinkedList(){
          * @memberof DoubleLinkedList
          * @instance
          * @description Inserts data at the end of the list
-         * @summary
-         * Speed indicated that this method was comparable to the native array
-         * With 1000 small objects both were equal
-         * With 100000 small object the double linked list was slightly slower by ms
-         * With 1000000 small object the double linked list was still a little slower by about 30ms
          * @param data {Object | Array} - Data to store into the array
          */
         insertAtPosition:insertAtPosition,
@@ -426,7 +520,7 @@ function DoubleLinkedList(){
         removeNode:function(comparitor, isReversed){
 
             cycle(function(node, idx){
-               var shouldStop =  comparitor(node) && (function(){deleteAtPosition(idx); return true;})();
+                var shouldStop =  comparitor(node) && (function(){deleteAtPosition(idx); return true;})();
                 return !shouldStop;
             }, isReversed);
 
@@ -472,7 +566,7 @@ function DoubleLinkedList(){
                 return idx !== oldIdx;
             });
 
-            var data =  current.getProtectedData();
+            var data =  current.getData();
 
             deleteAtPosition(oldIdx);
 
@@ -519,7 +613,7 @@ function DoubleLinkedList(){
         toArray:function(){
             var array = [];
             cycle(function(node){
-                array.push(node.getProtectedData());
+                array.push(node.getData());
                 return true;
             });
             return array;

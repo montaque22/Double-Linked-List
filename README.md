@@ -94,10 +94,8 @@ Returns the size of this list
 Inserts data at the end of the list
 
 **Kind**: instance method of <code>[DoubleLinkedList](#DoubleLinkedList)</code>  
-**Summary**: Speed indicated that this method was far superior than the native array at with greater data
-With 10000 small objects the native array was slightly faster by 3ms
-With 100000 small object the double linked list more than 2x&#x27;s faster.
-With 1000000 small object the double linked list more than ~100x&#x27;s faster.  
+**Summary**: This method is may be faster than the browser&#x27;s native array
+in placing an object at the beginning of the array  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -108,9 +106,6 @@ With 1000000 small object the double linked list more than ~100x&#x27;s faster.
 Inserts data at the end of the list
 
 **Kind**: instance method of <code>[DoubleLinkedList](#DoubleLinkedList)</code>  
-**Summary**: Speed indicated that this method was extremely slow in comparison to the native array
-With 100000 small objects the native array was 12x&#x27;s faster
-With 1000000 small object the native array was 6x&#x27;s faster  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -121,10 +116,6 @@ With 1000000 small object the native array was 6x&#x27;s faster
 Inserts data at the end of the list
 
 **Kind**: instance method of <code>[DoubleLinkedList](#DoubleLinkedList)</code>  
-**Summary**: Speed indicated that this method was comparable to the native array
-With 1000 small objects both were equal
-With 100000 small object the double linked list was slightly slower by ms
-With 1000000 small object the double linked list was still a little slower by about 30ms  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -249,7 +240,24 @@ var list = list.findAll({id:4})
 
 <a name="Node"></a>
 ## ~Node
+todo seal the default methods but allow object to be extensible
+
 **Kind**: inner class  
+
+* [~Node](#Node)
+  * [new Node(data, nextNode, previousNode)](#new_Node_new)
+  * [.setData(data)](#Node#setData)
+  * [.getDataForKey(key)](#Node#getDataForKey)
+  * [.appendData(data, key)](#Node#appendData)
+  * ~~[.getProtectedData()](#Node#getProtectedData) ⇒~~
+  * [.getData()](#Node#getData) ⇒
+  * [.hasNext()](#Node#hasNext) ⇒
+  * [.hasPrev()](#Node#hasPrev) ⇒
+  * [.setNext(obj)](#Node#setNext)
+  * [.setPrevious(obj)](#Node#setPrevious)
+  * [.getNext()](#Node#getNext) ⇒
+  * [.getPrevious()](#Node#getPrevious) ⇒
+
 <a name="new_Node_new"></a>
 ### new Node(data, nextNode, previousNode)
 class that represents the nodes that make up the list. Each of the node are referenced to at most
@@ -261,6 +269,94 @@ two other nodes - a previous and a next.
 | data | any object to store |
 | nextNode | a node to reference as next |
 | previousNode | a node to reference as previous |
+
+<a name="Node#setData"></a>
+### node.setData(data)
+sets the internal data object
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | the information you want to store the node |
+
+<a name="Node#getDataForKey"></a>
+### node.getDataForKey(key)
+getter for the internal data stored in the node
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>String</code> | the attribute property name to access the data |
+
+<a name="Node#appendData"></a>
+### node.appendData(data, key)
+allows you to set data in the internal object.
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | the information you want to store the node |
+| key | <code>String</code> | the property you want to store the data at |
+
+<a name="Node#getProtectedData"></a>
+### ~~node.getProtectedData() ⇒~~
+***Deprecated***
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+**Returns**: Object  
+<a name="Node#getData"></a>
+### node.getData() ⇒
+Returns the data that was passed into the object (or added) by the user
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+**Returns**: Object  
+<a name="Node#hasNext"></a>
+### node.hasNext() ⇒
+true if there is another node linked after the node that is caller of this method
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+**Returns**: Boolean  
+<a name="Node#hasPrev"></a>
+### node.hasPrev() ⇒
+true if there is another node linked before the node that is caller of this method
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+**Returns**: Boolean  
+<a name="Node#setNext"></a>
+### node.setNext(obj)
+takes a node object and sets it as the next node in the linked list
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>[Node](#Node)</code> | the node object you want to set as next |
+
+<a name="Node#setPrevious"></a>
+### node.setPrevious(obj)
+takes a node object and sets it as the previous node in the linked list
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>[Node](#Node)</code> | the node object you want to set as previous |
+
+<a name="Node#getNext"></a>
+### node.getNext() ⇒
+returns the node that is after the node that called this method
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+**Returns**: Node  
+<a name="Node#getPrevious"></a>
+### node.getPrevious() ⇒
+returns the node that is before the node that called this method
+
+**Kind**: instance method of <code>[Node](#Node)</code>  
+**Returns**: Node  
 
 
 ## Change Log
@@ -275,3 +371,9 @@ two other nodes - a previous and a next.
 * Fixed issue where adding attributes to the Node object via the dot notation did not propagate properly by restricting 
 alterations to the inner node class attributes through only 4 methods: setData, getDataForKey, appendData & 
 getProtectedData;
+
+
+### Version 0.2.0
+#### Bug Fix/Added Feature:
+* Able to use dot notation to manipulate data on the node objects
+* Node base methods are immutable and unenumberable

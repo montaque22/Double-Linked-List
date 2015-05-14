@@ -44,10 +44,11 @@ describe('Double Linked List', function(){
             var data =  {id:1};
             var list = new DoubleLinkedList();
             list.insertAtStart(data);
+            list.getHead().pin = 'drop';
             list.deleteAtPosition(0);
             list.undo();
 
-            assert.deepEqual({id:1}, list.getHead().getProtectedData());
+            assert.deepEqual({id:1, pin:'drop'}, list.getHead().getData());
 
         })
     })
@@ -336,8 +337,8 @@ describe('Double Linked List', function(){
             });
 
 
-            assert.deepEqual({id:2, name: 'Joe'}, array[0].getProtectedData());
-            assert.deepEqual({id:4, name: 'kenny'}, array[1].getProtectedData());
+            assert.deepEqual({id:2, name: 'Joe'}, array[0].getData());
+            assert.deepEqual({id:4, name: 'kenny'}, array[1].getData());
 
         })
     })
@@ -356,8 +357,8 @@ describe('Double Linked List', function(){
             var array = list.findAll({name:'sly'});
 
 
-            assert.deepEqual({id:3, name: 'sly'}, array[0].getProtectedData());
-            assert.deepEqual({id:5, name: 'sly'}, array[1].getProtectedData());
+            assert.deepEqual({id:3, name: 'sly'}, array[0].getData());
+            assert.deepEqual({id:5, name: 'sly'}, array[1].getData());
 
         })
     })
@@ -469,9 +470,9 @@ describe('Double Linked List', function(){
             list.getHead().invisibleData = true;
 
             assert.equal(true, list.getHead().invisibleData);
-            assert.equal(undefined, list.getHead().getDataForKey('invisibleData'));
-            assert.equal(undefined, list.getHead().getProtectedData()['invisibleData']);
-            assert.equal(undefined, list.toArray()[0]['invisibleData']);
+            assert.equal(true, list.getHead().getDataForKey('invisibleData'));
+            assert.equal(true, list.getHead().getData()['invisibleData']);
+            assert.equal(true, list.toArray()[0]['invisibleData']);
         })
     })
 
@@ -483,9 +484,9 @@ describe('Double Linked List', function(){
             list.insertAtEnd({id:1, name: 'Beth'});
             list.getHead().appendData(true,'invisibleData');
 
-            assert.equal(undefined, list.getHead().invisibleData);
+            assert.equal(true, list.getHead().invisibleData);
             assert.equal(true, list.getHead().getDataForKey('invisibleData'));
-            assert.equal(true, list.getHead().getProtectedData()['invisibleData']);
+            assert.equal(true, list.getHead().getData()['invisibleData']);
             assert.equal(true, list.toArray()[0]['invisibleData']);
         })
     })
