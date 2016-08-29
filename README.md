@@ -1,5 +1,5 @@
 
-# DOUBLE LINKED LIST
+# DOUBLE LINKED LIST [![Build Status](https://travis-ci.org/montaque22/Double-Linked-List.svg?branch=master)](https://travis-ci.org/montaque22/Double-Linked-List)
 ## Getting Started
 
 This is a simple double linked list. It has some tests but still use discretion.
