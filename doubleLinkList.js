@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 /**
  @author Michael Montaque
  @description Double Linked List
@@ -35,120 +35,151 @@ function DoubleLinkedList(){
     }
 
 
+    function normalizePosition(position){
+
+        if(isNaN(position) || position < 0){
+            return 0
+        }else if(position >= size){
+            return size - 1
+        }
+        return position;
+    }
+    /**
+     * uses recursion(top down) to find the node by index
+     * @param node
+     * @param indexPositionOfNode
+     * @returns {*}
+     */
+    function recursiveFindByIndex(node, indexPositionOfNode){
+
+
+        // Base Case
+        if(indexPositionOfNode <= 0){
+            return node;
+        }
+
+        // Error Case
+        else if(!node){
+            return null
+        }
+
+        // Error Case
+        else if(!node.hasNext() && indexPositionOfNode > 0){
+            return null;
+        }
+
+        // Error Case
+        else if(indexPositionOfNode >= size){
+            throw new Error('The index exceeds the size of the list')
+        }
+
+        // Recursive Call
+        return recursiveFindByIndex(node.getNext(), --indexPositionOfNode)
+    }
+
     /*
      CORE INSERT REMOVE FUNCTIONS: DeleteAtPosition  AND  InsertAtPosition
      These need to be in the main object scope as they refer to each other.
      */
     function deleteAtPosition(position){
-        position = (isNaN(position) || position < 0) ? 0 : position;
         var current = null;
+
         // There is nothing to remove
         if(size === 0){
             return null;
         }
 
-        // Remove Item from the beginning
-        else if(position <= 0){
+        // remove the only node
+        else if(size === 1){
+            // temporarily save the node (doesn't matter heads or tails)
             current = head;
-            head = head.getNext();
-            head && head.setPrevious(null);
-            current.setNext(null);
 
-            if(size === 1){
-                tail = head;
+            // set both head and tail to null
+            head = tail = null;
+
+        }else{
+
+            // make sure the position is valid
+            position = normalizePosition(position);
+
+            // find the node at the position
+            current = recursiveFindByIndex(head, position);
+
+            // Get the left and right side (prev and next) of the current node
+            var leftSide    = current.getPrevious();
+            var rightSide   = current.getNext();
+
+            // If the left node exist, set it to the right (it is ok if the right doesn't exist)
+            leftSide && leftSide.setNext(rightSide);
+
+            // If the right node exist, set it to the left (it is ok if the left doesn't exist)
+            rightSide && rightSide.setPrevious(leftSide);
+
+            // Handle fringe cases
+            if(position === 0){
+                // if the position is at the beginning, update the head to be the right node (since the left doesn't exist)
+                head = rightSide;
+            }else if(position === size - 1){
+                // if the position is at the end, update the tail to be the left node (since the right doesn't exist)
+                tail = leftSide
             }
-            size--;
+
         }
 
-        // Remove item from the end
-        else if(position >= size - 1){
-            current = tail;
-            tail =  tail.getPrevious();
-            tail && tail.setNext(null);
-            current.setPrevious(null);
-            size--;
-        }
-
-        // remove item from the middle
-        else {
-            var current = head;
-            for(var i = 0; i< size;i++){
-                if(i === position){
-                    current.getPrevious().setNext(current.getNext())
-                    current.getNext().setPrevious(current.getPrevious());
-                    current.setNext(null);
-                    current.setPrevious(null);
-                    size--;
-                    break;
-                }
-                current = current.getNext();
-            }
-        }
+        size--;
 
         storeCommand(wrapper(insertAtPosition)(current.getData(),position));
+
+        return current;
     }
 
+
+    /**
+     * Inserts a new node (with data) at the specified position
+     * @param data
+     * @param position
+     */
     function insertAtPosition(data, position){
         position = (isNaN(position) || position < 0) ? 0 : position;
+
+        // Create the new node
         var node = new Node(data);
 
-        // Inserting at the beginning
-        if(position <= 0){
-            if(!head){
-                tail = head = node;
-            }else{
-                head.setPrevious(node);
-                node.setNext(head);
-                head = node;
-            }
+        if(size === 0){
+            head = tail = node;
+        }
+        else {
+
+            // If the position is greater than the size of the list then append the node to the end
+            var isAtEnd = position >= size;
+
+            // Find the node at the given index (If it is greater than the index it will return the last on in the array)
+            var current = recursiveFindByIndex(head, (isAtEnd) ? size - 1 : position);
+
+            // Get the left node from the current node (if at the end then the left node is the current node
+            var leftNode    = (isAtEnd) ? current : current.getPrevious();
+
+            // get the next node
+            var rightNode   = (isAtEnd) ? null : current;
+
+            // left node will point its next to the node while...
+            leftNode    && leftNode.setNext(node);
+
+            // the right node will point its previous to the node
+            rightNode   && rightNode.setPrevious(node);
+
+            node.setPrevious(leftNode).setNext(rightNode);
+
+            tail = (isAtEnd) ? node : tail;
+
+            head = (position <=0 ) ? node : head;
+
         }
 
-        // Inserting at the End
-        else if(position >= size){
-            if(!head){
-                tail = head = node;
-            }else{
-                node.setPrevious(tail);
-                tail.setNext(node);
-                tail = node;
-            }
-        }
 
-        // Inserting Anywhere in the middle
-        else{
-            var current = head;
-            for(var i = 0; i < size; i++){
-                if(i === position){
-                    /*
-                     newNode -->current
-
-                     Prev <---> current
-                     */
-                    node.setNext(current);
-                    /*
-                     Prev <-- newNode --> current
-
-                     Prev <---> current
-                     */
-                    node.setPrevious(current.getPrevious());
-
-                    /*
-                     Prev <--> newNode --> current
-
-                     Prev <--- current
-                     */
-                    current.getPrevious().setNext(node);
-                    /*
-                     Prev <--> newNode <--> current
-                     */
-                    current.setPrevious(node);
-
-                    break;
-                }
-                current = current.getNext();
-            }
-        }
+        // Store the opposite command for the undo
         storeCommand(wrapper(deleteAtPosition)(position));
+
         size++;
     }
 
@@ -201,6 +232,19 @@ function DoubleLinkedList(){
         }
     };
 
+    function psychic(cb, isReversed){
+        if(typeof cb === 'function'){
+            var current = isReversed ? tail : head;
+            var idx = isReversed ? size - 1 : 0;
+            var shouldContinue = true;
+            while(current && shouldContinue){
+                shouldContinue = cb(current, current.getPrevious(), current.getNext(), idx);
+                current = isReversed ? current.getPrevious() : current.getNext();
+                idx += isReversed ? -1 : 1;
+            }
+        }
+    };
+
     /**
      * @name Node
      * @inner
@@ -219,21 +263,27 @@ function DoubleLinkedList(){
 
         var prev = previousNode;
         var next = nextNode;
-        var node = Object.create(data,{
-            getNext:{value:getNext},
-            getPrevious:{value:getPrevious},
-            setNext:{value:setNext},
-            setPrevious:{value:setPrevious},
-            hasNext:{value:hasNext},
-            hasPrev:{value:hasPrev},
-            getProtectedData:{value:getProtectedData},
-            getData:{value:getData},
-            appendData:{value:appendData},
-            getDataForKey:{value:getDataForKey},
-            setData:{value:setData}
-        });
+        var node = Object.create(Object.prototype);
+        Object.defineProperties(node,{
+            getNext:{value:getNext, enumerable:false, writable:false, configurable:false},
+            getPrevious:{value:getPrevious, enumerable:false, writable:false, configurable:false},
+            setNext:{value: setNext, enumerable:false, writable:false, configurable:false},
+            setPrevious:{value: setPrevious, enumerable:false, writable:false, configurable:false},
+            hasNext:{value:hasNext, enumerable:false, writable:false, configurable:false},
+            hasPrev:{value:hasPrev, enumerable:false, writable:false, configurable:false},
+            getProtectedData:{value:getProtectedData, enumerable:false, writable:false, configurable:false},
+            getData:{value:getData, enumerable:false, writable:false, configurable:false},
+            appendData:{value: appendData, enumerable:false, writable:false, configurable:false},
+            getDataForKey:{value:getDataForKey, enumerable:false, writable:false, configurable:false},
+            setData:{value: setData, enumerable:false, writable:false, configurable:false}
+        })
 
-        /**
+
+        function NodeMethods(){
+
+        }
+         setData(data);
+            /**
          * @function
          * @instance
          * @memberof Node
@@ -242,8 +292,9 @@ function DoubleLinkedList(){
          */
         function setData (data){
             for(var property in data){
-                this[property] = data[property];
+                node[property] = data[property];
             }
+            return node;
         };
 
         /**
@@ -254,7 +305,7 @@ function DoubleLinkedList(){
          * @param {String} key - the attribute property name to access the data
          */
         function getDataForKey (key){
-            return this[key];
+            return node[key];
         };
 
         /**
@@ -266,7 +317,7 @@ function DoubleLinkedList(){
          * @param {String} key - the property you want to store the data at
          */
         function appendData (data, key){
-            this[key] = data;
+            node[key] = data;
         };
 
         /**
@@ -290,7 +341,7 @@ function DoubleLinkedList(){
          */
         function getData (){
             var data = {};
-            for(var property in this){
+            for(var property in node){
                 data[property] = this[property];
             }
             return data;
@@ -325,6 +376,7 @@ function DoubleLinkedList(){
          */
         function setNext (obj){
             next = obj;
+            return node;
         }
         /**
          * @function
@@ -335,6 +387,7 @@ function DoubleLinkedList(){
          */
         function setPrevious (obj){
             prev = obj;
+            return node;
         }
 
         /**
@@ -432,7 +485,7 @@ function DoubleLinkedList(){
          * @function
          * @memberof DoubleLinkedList
          * @instance
-         * @description Inserts data at the end of the list
+         * @description Inserts data at the start of the list
          * @summary
          * This method is may be faster than the browser's native array
          * in placing an object at the beginning of the array
@@ -457,7 +510,7 @@ function DoubleLinkedList(){
          * @function
          * @memberof DoubleLinkedList
          * @instance
-         * @description Inserts data at the end of the list
+         * @description Inserts data at a specified position the list
          * @param data {Object | Array} - Data to store into the array
          */
         insertAtPosition:insertAtPosition,
@@ -559,18 +612,13 @@ function DoubleLinkedList(){
                 return
             }
 
-            var current = null;
-
-            cycle(function(node, idx){
-                current = node;
-                return idx !== oldIdx;
-            });
+            var current = recursiveFindByIndex(head, oldIdx);
 
             var data =  current.getData();
 
             deleteAtPosition(oldIdx);
 
-            insertAtPosition(data,newIdx);
+            insertAtPosition(data, newIdx);
 
             //need to undo twice because the two previous methods add to the undo queue
             storeCommand(function(){
@@ -591,6 +639,7 @@ function DoubleLinkedList(){
          * @function
          * @instance
          * @memberof DoubleLinkedList
+         * @deprecated Will be removed by version 1.0.0. (Please use the psychic method instead)
          * @description cycles through each node and returns it along with the index to the callback
          * To break free from the cycle the user can return false.
          * @param {Callback} callback - function that cycles through each element
@@ -602,6 +651,33 @@ function DoubleLinkedList(){
          * })
          */
         cycle:cycle,
+
+        /**
+         *
+         * @callback Psychic-Callback
+         * @param {Object} currentNode - The current node object in the list
+         * @param {Object} previousNode - The previous node object in the list
+         * @param {Object} nextNode - The next node object in the list
+         * @param {Number} idx - index of the object in the list
+         * @return {boolean} Optionally the user can return false to break free from the cycle early
+         */
+
+        /**
+         * @function
+         * @instance
+         * @memberof DoubleLinkedList
+         * @description cycles through each node and returns it along with the previous node, the next node
+         * and the index to the callback. To break free from the cycle the user can return false or let it run to the end
+         * @param {Callback} callback - function that cycles through each element
+         * returning the node and index.
+         * @param isReversed {Boolean} to cycle through the list in reverse
+         * @example
+         * list.psychic(function(currentNode, previousNode, nextNode, idx){
+         *      // Do something with the node
+         *      // return true to keep going or false to stop
+         * })
+         */
+        psychic:psychic,
 
         /**
          * @function
