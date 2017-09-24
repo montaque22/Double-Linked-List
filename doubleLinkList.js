@@ -180,7 +180,7 @@ export const DoubleLinkedList = function () {
 
         // Search for nodes using the function comparitor that the user passed in
         if(typeof comparitor === 'function'){
-            cycle(function(node){
+            psychic(function(node){
                 comparitor(node) && list.push(node);
                 return true;
             });
@@ -211,18 +211,18 @@ export const DoubleLinkedList = function () {
         shouldStoreCommand = true;
     };
 
-    function cycle(cb, isReversed){
-        if(typeof cb === 'function'){
-            var current = isReversed ? tail : head;
-            var idx = isReversed ? size - 1 : 0;
-            var shouldContinue = true;
-            while(current && shouldContinue){
-                shouldContinue = cb(current, idx);
-                current = isReversed ? current.getPrevious() : current.getNext();
-                idx += isReversed ? -1 : 1;
-            }
-        }
-    };
+    // function cycle(cb, isReversed){
+    //     if(typeof cb === 'function'){
+    //         var current = isReversed ? tail : head;
+    //         var idx = isReversed ? size - 1 : 0;
+    //         var shouldContinue = true;
+    //         while(current && shouldContinue){
+    //             shouldContinue = cb(current, idx);
+    //             current = isReversed ? current.getPrevious() : current.getNext();
+    //             idx += isReversed ? -1 : 1;
+    //         }
+    //     }
+    // };
 
     function psychic(cb, isReversed){
         if(typeof cb === 'function'){
@@ -416,7 +416,7 @@ export const DoubleLinkedList = function () {
          */
         removeNode:function(comparitor, isReversed){
 
-            cycle(function(node, idx){
+            psychic(function(node, prev, next, idx){
                 var shouldStop =  comparitor(node) && (function(){deleteAtPosition(idx); return true;})();
                 return !shouldStop;
             }, isReversed);
@@ -441,7 +441,6 @@ export const DoubleLinkedList = function () {
 
 
         /**
-         * @todo optimize (Method is brute force)
          * @function
          * @instance
          * @memberof DoubleLinkedList
@@ -487,7 +486,7 @@ export const DoubleLinkedList = function () {
          *      // Do something with the node
          * })
          */
-        cycle:cycle,
+        // cycle:cycle,
 
 
         /**
@@ -496,7 +495,7 @@ export const DoubleLinkedList = function () {
          * @memberof DoubleLinkedList
          * @description cycles through each node and returns it along with the previous node, the next node
          * and the index to the callback. To break free from the cycle the user can return false or let it run to the end
-         * @param {Callback} callback - function that cycles through each element
+         * @param {Psychic-Callback} callback - function that cycles through each element
          * returning the node and index.
          * @param {Boolean} isReversed - to cycle through the list in reverse
          * @example
@@ -516,7 +515,7 @@ export const DoubleLinkedList = function () {
          */
         toArray:function(){
             var array = [];
-            cycle(function(node){
+            psychic(function(node){
                 array.push(node.getData());
                 return true;
             });

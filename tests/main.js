@@ -367,7 +367,83 @@ describe('Double Linked List', function(){
         })
     })
 
-    describe('#cycle - Forward Implicit', function(){
+    describe('#psychic - Previous and Next', function(){
+        it('Previous should be null on first pass', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+            var node;
+
+            list.psychic(function(current, prev){
+                node =  prev;
+                return false;
+            });
+
+            assert.equal(undefined, node);
+        })
+
+        it('Next should be null on last pass', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+            var node;
+
+            list.psychic(function(current, prev, next){
+                node =  next;
+                return true;
+            });
+
+            assert.equal(undefined, node);
+        })
+
+        it('Previous should always be the current nodes previous', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+            list.psychic(function(current, prev){
+                assert.equal(current.getPrevious(), prev);
+                return false;
+            });
+
+
+        })
+
+        it('Next should always be the current nodes next', function(){
+
+            var list = new DoubleLinkedList();
+
+            list.insertAtEnd({id:1, name: 'Beth'});
+            list.insertAtEnd({id:2, name: 'Joe'});
+            list.insertAtEnd({id:3, name: 'sly'});
+            list.insertAtEnd({id:4, name: 'kenny'});
+            list.insertAtEnd({id:5, name: 'sly'});
+
+            list.psychic(function(current, prev, next){
+                assert.equal(current.getNext(), next);
+                return true;
+            });
+        })
+    })
+
+    describe('#psychic - Forward Implicit', function(){
         it('Should Return 1 after stopping at the first point due to implicity return of undefined', function(){
 
             var list = new DoubleLinkedList();
@@ -380,8 +456,8 @@ describe('Double Linked List', function(){
 
           var c1 = 0;
 
-            list.cycle(function(node, idx){
-                c1 = node.getDataForKey('id');
+            list.psychic(function(current){
+                c1 = current.getDataForKey('id');
             })
 
             assert.equal(1, c1);
@@ -389,7 +465,7 @@ describe('Double Linked List', function(){
         })
     })
 
-    describe('#cycle - Forward explicit', function(){
+    describe('#psychic - Forward explicit', function(){
         it('Should Return 5 for reaching the top And explicitly passing true', function(){
 
             var list = new DoubleLinkedList();
@@ -402,8 +478,8 @@ describe('Double Linked List', function(){
 
             var c1 = 0;
 
-            list.cycle(function(node, idx){
-                c1 = node.getDataForKey('id');
+            list.psychic(function(current){
+                c1 = current.getDataForKey('id');
                 return true;
             })
 
@@ -412,7 +488,7 @@ describe('Double Linked List', function(){
         })
     })
 
-    describe('#cycle - Reversed', function(){
+    describe('#psychic - Reversed', function(){
         it('Should Return reaching 0', function(){
 
             var list = new DoubleLinkedList();
@@ -428,8 +504,8 @@ describe('Double Linked List', function(){
 
 
 
-            list.cycle(function(node, idx){
-                c2 = node.getDataForKey('id')
+            list.psychic(function(currentNode){
+                c2 = currentNode.getDataForKey('id')
                 return true;
             },true);
 
@@ -439,7 +515,7 @@ describe('Double Linked List', function(){
         })
     })
 
-    describe('#cycle - Cancelled', function(){
+    describe('#psychic - Cancelled', function(){
         it('Should Return 3 after cancelling midway', function(){
 
             var list = new DoubleLinkedList();
@@ -452,9 +528,9 @@ describe('Double Linked List', function(){
 
             var c3 = 0;
 
-            list.cycle(function(node, idx){
+            list.psychic(function(current, prev, next, idx){
                 if(idx === 2){
-                    c3 = node.getDataForKey('id');
+                    c3 = current.getDataForKey('id');
                     return false;
                 }
                 c3 = 0;

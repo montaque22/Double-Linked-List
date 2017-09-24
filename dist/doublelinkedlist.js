@@ -263,7 +263,7 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
 
         // Search for nodes using the function comparitor that the user passed in
         if (typeof comparitor === 'function') {
-            cycle(function (node) {
+            psychic(function (node) {
                 comparitor(node) && list.push(node);
                 return true;
             });
@@ -294,18 +294,18 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
         shouldStoreCommand = true;
     };
 
-    function cycle(cb, isReversed) {
-        if (typeof cb === 'function') {
-            var current = isReversed ? tail : head;
-            var idx = isReversed ? size - 1 : 0;
-            var shouldContinue = true;
-            while (current && shouldContinue) {
-                shouldContinue = cb(current, idx);
-                current = isReversed ? current.getPrevious() : current.getNext();
-                idx += isReversed ? -1 : 1;
-            }
-        }
-    };
+    // function cycle(cb, isReversed){
+    //     if(typeof cb === 'function'){
+    //         var current = isReversed ? tail : head;
+    //         var idx = isReversed ? size - 1 : 0;
+    //         var shouldContinue = true;
+    //         while(current && shouldContinue){
+    //             shouldContinue = cb(current, idx);
+    //             current = isReversed ? current.getPrevious() : current.getNext();
+    //             idx += isReversed ? -1 : 1;
+    //         }
+    //     }
+    // };
 
     function psychic(cb, isReversed) {
         if (typeof cb === 'function') {
@@ -327,9 +327,9 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
     /**
      * @namespace DoubleLinkedList-Type
      * @callback Psychic-Callback
-     * @param {Object} currentNode - The current node object in the list
-     * @param {Object} previousNode - The previous node object in the list
-     * @param {Object} nextNode - The next node object in the list
+     * @param {LinkNode} currentNode - The current node object in the list
+     * @param {LinkNode} previousNode - The previous node object in the list
+     * @param {LinkNode} nextNode - The next node object in the list
      * @param {Number} idx - index of the object in the list
      * @return {boolean} Optionally the user can return false to break free from the cycle early
      */
@@ -337,7 +337,7 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
     /**
      * @namespace DoubleLinkedList-Type
      * @callback Callback
-     * @param {Object} node - object in the list
+     * @param {LinkNode} node - object in the list
      * @param {Number} idx - index of the object in the list
      * @return {boolean} Optionally the user can return false to break free from the cycle early
      */
@@ -345,7 +345,7 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
     /**
      * @namespace DoubleLinkedList-Type
      * @callback Comparitor
-     * @param {Object} node - object in the list
+     * @param {LinkNode} node - object in the list
      * @param {Number} idx - index of the object in the list
      * @return {boolean} the user should return true any time a condition is met while comparing the node
      */
@@ -359,7 +359,7 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
          * @instance
          * @memberof DoubleLinkedList
          * @description Will trigger all the functions given to it when objects are added, removed or moved.
-         * @param {function} function to call when a change occurs
+         * @param {function} func - called when a change occurs
          */
         onChange: function onChange(func) {
             typeof func === 'function' && onChangeList.push(func);
@@ -496,7 +496,7 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
          */
         removeNode: function removeNode(comparitor, isReversed) {
 
-            cycle(function (node, idx) {
+            psychic(function (node, prev, next, idx) {
                 var shouldStop = comparitor(node) && function () {
                     deleteAtPosition(idx);return true;
                 }();
@@ -525,7 +525,6 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
         },
 
         /**
-         * @todo optimize (Method is brute force)
          * @function
          * @instance
          * @memberof DoubleLinkedList
@@ -570,7 +569,8 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
          *      // Do something with the node
          * })
          */
-        cycle: cycle,
+        // cycle:cycle,
+
 
         /**
          * @function
@@ -578,9 +578,9 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
          * @memberof DoubleLinkedList
          * @description cycles through each node and returns it along with the previous node, the next node
          * and the index to the callback. To break free from the cycle the user can return false or let it run to the end
-         * @param {Callback} callback - function that cycles through each element
+         * @param {Psychic-Callback} callback - function that cycles through each element
          * returning the node and index.
-         * @param isReversed {Boolean} to cycle through the list in reverse
+         * @param {Boolean} isReversed - to cycle through the list in reverse
          * @example
          * list.psychic(function(currentNode, previousNode, nextNode, idx){
          *      // Do something with the node
@@ -598,7 +598,7 @@ var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
          */
         toArray: function toArray() {
             var array = [];
-            cycle(function (node) {
+            psychic(function (node) {
                 array.push(node.getData());
                 return true;
             });

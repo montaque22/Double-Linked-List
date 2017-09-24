@@ -22,6 +22,7 @@ var linkedList =  new DoubleLinkedList();
 - Updated documentation
 - Updated build. Now includes minified version.
 - Converted the build to UMD. As a result the instantiation process for node has changed.
+- Cycle method has been removed. Please use Psychic method instead.
 ### Table of Contents
 
 -   [DoubleLinkedList](#doublelinkedlist)
@@ -40,8 +41,8 @@ var linkedList =  new DoubleLinkedList();
     -   [getTail](#gettail)
     -   [getHead](#gethead)
     -   [move](#move)
-    -   [cycle](#cycle)
     -   [psychic](#psychic)
+    -   [psychic](#psychic-1)
     -   [toArray](#toarray)
     -   [findAll](#findall)
 -   [Psychic-Callback](#psychic-callback)
@@ -173,7 +174,27 @@ moves the object
 -   `oldIdx` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** the index of the object you want to move
 -   `newIdx` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** the index you want to move the old object to
 
-### cycle
+### psychic
+
+cycles through each node and returns it along with the previous node, the next node
+and the index to the callback. To break free from the cycle the user can return false or let it run to the end
+
+**Parameters**
+
+-   `callback` **[Psychic-Callback](#psychic-callback)** function that cycles through each element
+    returning the node and index.
+-   `isReversed` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** to cycle through the list in reverse
+
+**Examples**
+
+```javascript
+list.psychic(function(currentNode, previousNode, nextNode, idx){
+     // Do something with the node
+     // return true to keep going or false to stop
+})
+```
+
+### psychic
 
 cycles through each node and returns it along with the index to the callback
 To break free from the cycle the user can return false.
@@ -196,26 +217,6 @@ list.cycle(function(node, idx){
 
 -   **deprecated**: Will be removed by version 1.0.0. (Please use the psychic method instead)
 
-
-### psychic
-
-cycles through each node and returns it along with the previous node, the next node
-and the index to the callback. To break free from the cycle the user can return false or let it run to the end
-
-**Parameters**
-
--   `callback` **[Callback](#callback)** function that cycles through each element
-    returning the node and index.
--   `isReversed` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** to cycle through the list in reverse
-
-**Examples**
-
-```javascript
-list.psychic(function(currentNode, previousNode, nextNode, idx){
-     // Do something with the node
-     // return true to keep going or false to stop
-})
-```
 
 ### toArray
 
