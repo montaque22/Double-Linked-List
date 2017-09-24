@@ -42,7 +42,6 @@ var linkedList =  new DoubleLinkedList();
     -   [getHead](#gethead)
     -   [move](#move)
     -   [psychic](#psychic)
-    -   [psychic](#psychic-1)
     -   [toArray](#toarray)
     -   [findAll](#findall)
 -   [Psychic-Callback](#psychic-callback)
@@ -193,30 +192,6 @@ list.psychic(function(currentNode, previousNode, nextNode, idx){
      // return true to keep going or false to stop
 })
 ```
-
-### psychic
-
-cycles through each node and returns it along with the index to the callback
-To break free from the cycle the user can return false.
-
-**Parameters**
-
--   `callback` **[Callback](#callback)** function that cycles through each element
-    returning the node and index.
--   `isReversed`  {Boolean} to cycle through the list in reverse
-
-**Examples**
-
-```javascript
-list.cycle(function(node, idx){
-     // Do something with the node
-})
-```
-
-**Meta**
-
--   **deprecated**: Will be removed by version 1.0.0. (Please use the psychic method instead)
-
 
 ### toArray
 

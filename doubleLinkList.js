@@ -471,23 +471,6 @@ export const DoubleLinkedList = function () {
         },
 
 
-        /**
-         * @function
-         * @instance
-         * @memberof DoubleLinkedList
-         * @deprecated Will be removed by version 1.0.0. (Please use the psychic method instead)
-         * @description cycles through each node and returns it along with the index to the callback
-         * To break free from the cycle the user can return false.
-         * @param {Callback} callback - function that cycles through each element
-         * returning the node and index.
-         * @param isReversed {Boolean} to cycle through the list in reverse
-         * @example
-         * list.cycle(function(node, idx){
-         *      // Do something with the node
-         * })
-         */
-        // cycle:cycle,
-
 
         /**
          * @function
