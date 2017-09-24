@@ -1,12 +1,12 @@
 {
   "name": "double-linkedlist",
-  "version": "0.2.0",
+  "version": "1.0.4",
   "homepage": "https://github.com/montaque22/Double-Linked-List",
   "authors": [
     "Michael Montaque"
   ],
   "description": "A double linked list data structure for storing data",
-  "main": "doubleLinkList.js",
+  "main": "dist/doublelinkedlist.js",
   "keywords": [
     "data",
     "structure",
