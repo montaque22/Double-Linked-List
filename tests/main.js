@@ -1,8 +1,9 @@
 /**
  * Created by mmontaque on 4/28/15.
  */
-var DoubleLinkedList = require('../doubleLinkList');
+var DoubleLinkedList = require('../dist/doublelinkedlist').DoubleLinkedList;
 var assert = require("assert");
+
 
 
 describe('Double Linked List', function(){
@@ -10,6 +11,7 @@ describe('Double Linked List', function(){
     describe('#getSize', function(){
         it('Should say return 1 after inserting 1 object', function(){
             var data =  {id:1};
+            console.log(DoubleLinkedList)
             var insertAtStart = new DoubleLinkedList();
             insertAtStart.insertAtStart(data);
 

@@ -4,6 +4,7 @@
   "description": "A double linked list data structure for storing data",
   "main": "doubleLinkList.js",
   "scripts": {
+    "compile": "rm -r -f ./dist && ./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
     "test": "mocha tests/main.js"
   },
   "repository": "https://github.com/montaque22/Double-Linked-List",
@@ -21,7 +22,13 @@
     "url": "https://github.com/montaque22/Double-Linked-List/issues"
   },
   "devDependencies": {
-    "mocha": "^2.2.4"
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "mocha": "^2.2.4",
+    "webpack": "^3.5.5",
+    "webpack-closure-compiler": "^2.1.5"
   },
   "dependencies": {},
   "private": false

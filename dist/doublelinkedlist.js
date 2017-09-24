@@ -1,5 +1,90 @@
-'use strict';
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
 
+module.exports = __webpack_require__(1);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 /**
@@ -7,7 +92,14 @@
  @description Double Linked List
  @class DoubleLinkedList
  */
-export const DoubleLinkedList = function () {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var DoubleLinkedList = exports.DoubleLinkedList = function DoubleLinkedList() {
     var tail;
     var head;
     var size = 0;
@@ -19,155 +111,146 @@ export const DoubleLinkedList = function () {
     /*
         HELPER FUNCTIONS: StoreCommand  AND   Wrapper Needed to operate the undo functions
      */
-    function storeCommand(curriedCommand){
+    function storeCommand(curriedCommand) {
         shouldStoreCommand && undoCommandList.push(curriedCommand);
-        for(var i = 0;i < onChangeList.length;i++){
+        for (var i = 0; i < onChangeList.length; i++) {
             onChangeList[i]();
         }
     }
 
-
-    function wrapper(method){
-        return function(){
-            var args =  arguments;
-            return function(){
-                method.apply(_this, args)
-            }
-        }
+    function wrapper(method) {
+        return function () {
+            var args = arguments;
+            return function () {
+                method.apply(_this, args);
+            };
+        };
     }
 
+    function normalizePosition(position) {
 
-    function normalizePosition(position){
-
-        if(isNaN(position) || position < 0){
-            return 0
-        }else if(position >= size){
-            return size - 1
+        if (isNaN(position) || position < 0) {
+            return 0;
+        } else if (position >= size) {
+            return size - 1;
         }
         return position;
     }
 
-
-    function recursiveFindByIndex(node, indexPositionOfNode){
-
+    function recursiveFindByIndex(node, indexPositionOfNode) {
 
         // Base Case
-        if(indexPositionOfNode <= 0){
+        if (indexPositionOfNode <= 0) {
             return node;
         }
 
         // Error Case
-        else if(!node){
-            return null
-        }
+        else if (!node) {
+                return null;
+            }
 
-        // Error Case
-        else if(!node.hasNext() && indexPositionOfNode > 0){
-            return null;
-        }
+            // Error Case
+            else if (!node.hasNext() && indexPositionOfNode > 0) {
+                    return null;
+                }
 
-        // Error Case
-        else if(indexPositionOfNode >= size){
-            throw new Error('The index exceeds the size of the list')
-        }
+                // Error Case
+                else if (indexPositionOfNode >= size) {
+                        throw new Error('The index exceeds the size of the list');
+                    }
 
         // Recursive Call
-        return recursiveFindByIndex(node.getNext(), --indexPositionOfNode)
+        return recursiveFindByIndex(node.getNext(), --indexPositionOfNode);
     }
 
     /*
      CORE INSERT REMOVE FUNCTIONS: DeleteAtPosition  AND  InsertAtPosition
      These need to be in the main object scope as they refer to each other.
      */
-    function deleteAtPosition(position){
+    function deleteAtPosition(position) {
         var current = null;
 
         // There is nothing to remove
-        if(size === 0){
+        if (size === 0) {
             return null;
         }
 
         // remove the only node
-        else if(size === 1){
-            // temporarily save the node (doesn't matter heads or tails)
-            current = head;
+        else if (size === 1) {
+                // temporarily save the node (doesn't matter heads or tails)
+                current = head;
 
-            // set both head and tail to null
-            head = tail = null;
+                // set both head and tail to null
+                head = tail = null;
+            } else {
 
-        }else{
+                // make sure the position is valid
+                position = normalizePosition(position);
 
-            // make sure the position is valid
-            position = normalizePosition(position);
+                // find the node at the position
+                current = recursiveFindByIndex(head, position);
 
-            // find the node at the position
-            current = recursiveFindByIndex(head, position);
+                // Get the left and right side (prev and next) of the current node
+                var leftSide = current.getPrevious();
+                var rightSide = current.getNext();
 
-            // Get the left and right side (prev and next) of the current node
-            var leftSide    = current.getPrevious();
-            var rightSide   = current.getNext();
+                // If the left node exist, set it to the right (it is ok if the right doesn't exist)
+                leftSide && leftSide.setNext(rightSide);
 
-            // If the left node exist, set it to the right (it is ok if the right doesn't exist)
-            leftSide && leftSide.setNext(rightSide);
+                // If the right node exist, set it to the left (it is ok if the left doesn't exist)
+                rightSide && rightSide.setPrevious(leftSide);
 
-            // If the right node exist, set it to the left (it is ok if the left doesn't exist)
-            rightSide && rightSide.setPrevious(leftSide);
-
-            // Handle fringe cases
-            if(position === 0){
-                // if the position is at the beginning, update the head to be the right node (since the left doesn't exist)
-                head = rightSide;
-            }else if(position === size - 1){
-                // if the position is at the end, update the tail to be the left node (since the right doesn't exist)
-                tail = leftSide
+                // Handle fringe cases
+                if (position === 0) {
+                    // if the position is at the beginning, update the head to be the right node (since the left doesn't exist)
+                    head = rightSide;
+                } else if (position === size - 1) {
+                    // if the position is at the end, update the tail to be the left node (since the right doesn't exist)
+                    tail = leftSide;
+                }
             }
-
-        }
 
         size--;
 
-        storeCommand(wrapper(insertAtPosition)(current.getData(),position));
+        storeCommand(wrapper(insertAtPosition)(current.getData(), position));
 
         return current;
     }
 
-    function insertAtPosition(data, position){
-        position = (isNaN(position) || position < 0) ? 0 : position;
+    function insertAtPosition(data, position) {
+        position = isNaN(position) || position < 0 ? 0 : position;
 
         // Create the new node
         var node = new LinkNode(data);
 
-        if(size === 0){
+        if (size === 0) {
             head = tail = node;
-        }
-        else {
+        } else {
 
             // If the position is greater than the size of the list then append the node to the end
             var isAtEnd = position >= size;
 
             // Find the node at the given index (If it is greater than the index it will return the last on in the array)
-            var current = recursiveFindByIndex(head, (isAtEnd) ? size - 1 : position);
+            var current = recursiveFindByIndex(head, isAtEnd ? size - 1 : position);
 
             // Get the left node from the current node (if at the end then the left node is the current node
-            var leftNode    = (isAtEnd) ? current : current.getPrevious();
+            var leftNode = isAtEnd ? current : current.getPrevious();
 
             // get the next node
-            var rightNode   = (isAtEnd) ? null : current;
+            var rightNode = isAtEnd ? null : current;
 
             // left node will point its next to the node while...
-            leftNode    && leftNode.setNext(node);
+            leftNode && leftNode.setNext(node);
 
             // the right node will point its previous to the node
-            rightNode   && rightNode.setPrevious(node);
+            rightNode && rightNode.setPrevious(node);
 
             node.setPrevious(leftNode).setNext(rightNode);
 
-            tail = (isAtEnd) ? node : tail;
+            tail = isAtEnd ? node : tail;
 
-            head = (position <=0 ) ? node : head;
-
+            head = position <= 0 ? node : head;
         }
-
 
         // Store the opposite command for the undo
         storeCommand(wrapper(deleteAtPosition)(position));
@@ -175,48 +258,48 @@ export const DoubleLinkedList = function () {
         size++;
     }
 
-    function findAll(comparitor){
+    function findAll(comparitor) {
         var list = [];
 
         // Search for nodes using the function comparitor that the user passed in
-        if(typeof comparitor === 'function'){
-            cycle(function(node){
+        if (typeof comparitor === 'function') {
+            cycle(function (node) {
                 comparitor(node) && list.push(node);
                 return true;
             });
         }
 
         // Search for nodes using the object to compare against
-        else if(typeof comparitor === 'object'){
-            list = findAll(function(node){
-                var isMatch = true;
-                var keys = Object.keys(comparitor);
-                for(var i = 0 ;i < keys.length; i++){
-                    var key = keys[i];
-                    if (node.getDataForKey(key) !== comparitor[key]){
-                        isMatch = false;
-                        break;
+        else if ((typeof comparitor === 'undefined' ? 'undefined' : _typeof(comparitor)) === 'object') {
+                list = findAll(function (node) {
+                    var isMatch = true;
+                    var keys = Object.keys(comparitor);
+                    for (var i = 0; i < keys.length; i++) {
+                        var key = keys[i];
+                        if (node.getDataForKey(key) !== comparitor[key]) {
+                            isMatch = false;
+                            break;
+                        }
                     }
-                }
-                return isMatch;
-            });
-        }
+                    return isMatch;
+                });
+            }
         return list;
     };
 
-    function undo(){
+    function undo() {
         shouldStoreCommand = false;
         var method = undoCommandList.pop();
         typeof method === 'function' && method();
         shouldStoreCommand = true;
     };
 
-    function cycle(cb, isReversed){
-        if(typeof cb === 'function'){
+    function cycle(cb, isReversed) {
+        if (typeof cb === 'function') {
             var current = isReversed ? tail : head;
             var idx = isReversed ? size - 1 : 0;
             var shouldContinue = true;
-            while(current && shouldContinue){
+            while (current && shouldContinue) {
                 shouldContinue = cb(current, idx);
                 current = isReversed ? current.getPrevious() : current.getNext();
                 idx += isReversed ? -1 : 1;
@@ -224,19 +307,18 @@ export const DoubleLinkedList = function () {
         }
     };
 
-    function psychic(cb, isReversed){
-        if(typeof cb === 'function'){
+    function psychic(cb, isReversed) {
+        if (typeof cb === 'function') {
             var current = isReversed ? tail : head;
             var idx = isReversed ? size - 1 : 0;
             var shouldContinue = true;
-            while(current && shouldContinue){
+            while (current && shouldContinue) {
                 shouldContinue = cb(current, current.getPrevious(), current.getNext(), idx);
                 current = isReversed ? current.getPrevious() : current.getNext();
                 idx += isReversed ? -1 : 1;
             }
         }
     };
-
 
     /*
         ------ METHODS AVAILABLE TO THE USER ------
@@ -277,9 +359,9 @@ export const DoubleLinkedList = function () {
          * @instance
          * @memberof DoubleLinkedList
          * @description Will trigger all the functions given to it when objects are added, removed or moved.
-         * @param {function} func - called when a change occurs
+         * @param {function} function to call when a change occurs
          */
-        onChange:function(func){
+        onChange: function onChange(func) {
             typeof func === 'function' && onChangeList.push(func);
         },
         /**
@@ -289,8 +371,8 @@ export const DoubleLinkedList = function () {
          * @description determines if there are any more undo left
          * @returns {boolean}
          */
-        canUndo:function(){
-            return undoCommandList.length > 0
+        canUndo: function canUndo() {
+            return undoCommandList.length > 0;
         },
         /**
          * @function
@@ -298,7 +380,7 @@ export const DoubleLinkedList = function () {
          * @memberof DoubleLinkedList
          * @description will undo the last modifying command
          */
-        undo:undo,
+        undo: undo,
 
         /**
          * @function
@@ -306,7 +388,7 @@ export const DoubleLinkedList = function () {
          * @memberof DoubleLinkedList
          * @description removes all the undo that the user can perform
          */
-        clearUndo:function(){
+        clearUndo: function clearUndo() {
             undoCommandList = [];
         },
 
@@ -317,7 +399,7 @@ export const DoubleLinkedList = function () {
          * @description is this data list empty?
          * @returns {boolean}
          */
-        isEmpty:function(){
+        isEmpty: function isEmpty() {
             return head === null || head === undefined;
         },
 
@@ -328,7 +410,7 @@ export const DoubleLinkedList = function () {
          * @description Returns the size of this list
          * @returns {Number}
          */
-        getSize:function(){
+        getSize: function getSize() {
             return size;
         },
 
@@ -342,8 +424,8 @@ export const DoubleLinkedList = function () {
          * in placing an object at the beginning of the array
          * @param {Object | Array} data - Data to store into the array
          */
-        insertAtStart:function(data){
-            insertAtPosition(data,0);
+        insertAtStart: function insertAtStart(data) {
+            insertAtPosition(data, 0);
         },
 
         /**
@@ -353,8 +435,8 @@ export const DoubleLinkedList = function () {
          * @description Inserts data at the end of the list
          * @param {Object | Array} data - Data to store into the array
          */
-        insertAtEnd:function(data){
-            insertAtPosition(data,size);
+        insertAtEnd: function insertAtEnd(data) {
+            insertAtPosition(data, size);
         },
 
         /**
@@ -364,7 +446,7 @@ export const DoubleLinkedList = function () {
          * @description Inserts data at a specified position the list
          * @param {Object | Array} data - Data to store into the array
          */
-        insertAtPosition:insertAtPosition,
+        insertAtPosition: insertAtPosition,
 
         /**
          * @function
@@ -373,7 +455,7 @@ export const DoubleLinkedList = function () {
          * @description removes a node at the specified position
          * @param {Number} position - index of the node you want to remove
          */
-        deleteAtPosition:deleteAtPosition,
+        deleteAtPosition: deleteAtPosition,
 
         /**
          * @function
@@ -381,24 +463,22 @@ export const DoubleLinkedList = function () {
          * @memberof DoubleLinkedList
          * @description removes all the nodes
          */
-        deleteAll:function(){
+        deleteAll: function deleteAll() {
 
-            if(size){
+            if (size) {
                 var counter = size;
                 var undoItAll = [];
-                for(;counter > 0;counter--){
+                for (; counter > 0; counter--) {
                     deleteAtPosition(0);
-                    undoItAll.push(undo)
+                    undoItAll.push(undo);
                 }
-                storeCommand(function(){
-                    for(var i = 0; i < undoItAll.length;i++){
+                storeCommand(function () {
+                    for (var i = 0; i < undoItAll.length; i++) {
                         undoItAll[i]();
                     }
                 });
             }
-
         },
-
 
         /**
          * @function
@@ -414,13 +494,14 @@ export const DoubleLinkedList = function () {
          *      return node.id === 4
          * },true)
          */
-        removeNode:function(comparitor, isReversed){
+        removeNode: function removeNode(comparitor, isReversed) {
 
-            cycle(function(node, idx){
-                var shouldStop =  comparitor(node) && (function(){deleteAtPosition(idx); return true;})();
+            cycle(function (node, idx) {
+                var shouldStop = comparitor(node) && function () {
+                    deleteAtPosition(idx);return true;
+                }();
                 return !shouldStop;
             }, isReversed);
-
         },
 
         /**
@@ -429,7 +510,9 @@ export const DoubleLinkedList = function () {
          * @memberof DoubleLinkedList
          * @return {Object} the node at the end of the list
          */
-        getTail:function(){return tail;},
+        getTail: function getTail() {
+            return tail;
+        },
 
         /**
          * @function
@@ -437,8 +520,9 @@ export const DoubleLinkedList = function () {
          * @memberof DoubleLinkedList
          * @return {Object} the node at the start of the list
          */
-        getHead:function(){return head;},
-
+        getHead: function getHead() {
+            return head;
+        },
 
         /**
          * @todo optimize (Method is brute force)
@@ -449,28 +533,27 @@ export const DoubleLinkedList = function () {
          * @param {Number} oldIdx - the index of the object you want to move
          * @param {Number} newIdx - the index you want to move the old object to
          */
-        move:function(oldIdx, newIdx){
+        move: function move(oldIdx, newIdx) {
 
             //if invalid Number, leave
-            if(oldIdx === newIdx || oldIdx < 0 || newIdx < 0 || isNaN(oldIdx) || isNaN(newIdx)){
-                return
+            if (oldIdx === newIdx || oldIdx < 0 || newIdx < 0 || isNaN(oldIdx) || isNaN(newIdx)) {
+                return;
             }
 
             var current = recursiveFindByIndex(head, oldIdx);
 
-            var data =  current.getData();
+            var data = current.getData();
 
             deleteAtPosition(oldIdx);
 
             insertAtPosition(data, newIdx);
 
             //need to undo twice because the two previous methods add to the undo queue
-            storeCommand(function(){
+            storeCommand(function () {
                 undo();
                 undo();
             });
         },
-
 
         /**
          * @function
@@ -487,8 +570,7 @@ export const DoubleLinkedList = function () {
          *      // Do something with the node
          * })
          */
-        cycle:cycle,
-
+        cycle: cycle,
 
         /**
          * @function
@@ -498,14 +580,14 @@ export const DoubleLinkedList = function () {
          * and the index to the callback. To break free from the cycle the user can return false or let it run to the end
          * @param {Callback} callback - function that cycles through each element
          * returning the node and index.
-         * @param {Boolean} isReversed - to cycle through the list in reverse
+         * @param isReversed {Boolean} to cycle through the list in reverse
          * @example
          * list.psychic(function(currentNode, previousNode, nextNode, idx){
          *      // Do something with the node
          *      // return true to keep going or false to stop
          * })
          */
-        psychic:psychic,
+        psychic: psychic,
 
         /**
          * @function
@@ -514,9 +596,9 @@ export const DoubleLinkedList = function () {
          * @description returns an array of the data
          * @return {Array} the internal data as an array
          */
-        toArray:function(){
+        toArray: function toArray() {
             var array = [];
-            cycle(function(node){
+            cycle(function (node) {
                 array.push(node.getData());
                 return true;
             });
@@ -539,10 +621,9 @@ export const DoubleLinkedList = function () {
          *
          * var list = list.findAll({id:4})
          */
-        findAll:findAll
+        findAll: findAll
     };
 };
-
 
 /**
  * @namespace LinkNode
@@ -556,8 +637,8 @@ export const DoubleLinkedList = function () {
  * @param previousNode - a node to reference as previous
  */
 function LinkNode(data, nextNode, previousNode) {
-    if(typeof data != 'object'){
-        throw 'Invalid data. Double Linked List can only take an object as a parameter not a ' + typeof data;
+    if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) != 'object') {
+        throw 'Invalid data. Double Linked List can only take an object as a parameter not a ' + (typeof data === 'undefined' ? 'undefined' : _typeof(data));
     }
 
     var prev = previousNode;
@@ -567,7 +648,7 @@ function LinkNode(data, nextNode, previousNode) {
     /**
      * @lends LinkNode
      */
-    Object.defineProperties(node,{
+    Object.defineProperties(node, {
 
         /**
          * @function
@@ -576,7 +657,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description returns the node that is after the node that called this method
          * @return LinkNode
          */
-        getNext:{value:getNext, enumerable:false, writable:false, configurable:false},
+        getNext: { value: getNext, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -585,7 +666,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description returns the node that is before the node that called this method
          * @return LinkNode
          */
-        getPrevious:{value:getPrevious, enumerable:false, writable:false, configurable:false},
+        getPrevious: { value: getPrevious, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -594,7 +675,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description takes a node object and sets it as the next node in the linked list
          * @param {Node} obj - the node object you want to set as next
          */
-        setNext:{value: setNext, enumerable:false, writable:false, configurable:false},
+        setNext: { value: setNext, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -603,7 +684,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description takes a node object and sets it as the previous node in the linked list
          * @param {Node} obj - the node object you want to set as previous
          */
-        setPrevious:{value: setPrevious, enumerable:false, writable:false, configurable:false},
+        setPrevious: { value: setPrevious, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -612,7 +693,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description true if there is another node linked after the node that is caller of this method
          * @return Boolean
          */
-        hasNext:{value:hasNext, enumerable:false, writable:false, configurable:false},
+        hasNext: { value: hasNext, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -621,7 +702,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description true if there is another node linked before the node that is caller of this method
          * @return Boolean
          */
-        hasPrev:{value:hasPrev, enumerable:false, writable:false, configurable:false},
+        hasPrev: { value: hasPrev, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -630,7 +711,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @deprecated Will be removed by version 1.0.0. (Please use the getData data method instead)
          * @return Object
          */
-        getProtectedData:{value:getProtectedData, enumerable:false, writable:false, configurable:false},
+        getProtectedData: { value: getProtectedData, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -638,7 +719,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description Returns the data that was passed into the object (or added) by the user
          * @return Object
          */
-        getData:{value:getData, enumerable:false, writable:false, configurable:false},
+        getData: { value: getData, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -648,7 +729,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @param {Object} data - the information you want to store the node
          * @param {String} key - the property you want to store the data at
          */
-        appendData:{value: appendData, enumerable:false, writable:false, configurable:false},
+        appendData: { value: appendData, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -657,7 +738,7 @@ function LinkNode(data, nextNode, previousNode) {
          * @description getter for the internal data stored in the node
          * @param {String} key - the attribute property name to access the data
          */
-        getDataForKey:{value:getDataForKey, enumerable:false, writable:false, configurable:false},
+        getDataForKey: { value: getDataForKey, enumerable: false, writable: false, configurable: false },
 
         /**
          * @function
@@ -666,73 +747,69 @@ function LinkNode(data, nextNode, previousNode) {
          * @description sets the internal data object
          * @param {Object} data - the information you want to store the node
          */
-        setData:{value: setData, enumerable:false, writable:false, configurable:false}
+        setData: { value: setData, enumerable: false, writable: false, configurable: false }
     });
 
     setData(data);
 
-
-    function setData (data){
-        for(var property in data){
+    function setData(data) {
+        for (var property in data) {
             node[property] = data[property];
         }
         return node;
     };
 
-
-    function getDataForKey (key){
+    function getDataForKey(key) {
         return node[key];
     };
 
-
-    function appendData (data, key){
+    function appendData(data, key) {
         node[key] = data;
     };
 
-
-    function getProtectedData (){
-        console.error("Deprecated: Please use getData method instead")
-        return getData()
+    function getProtectedData() {
+        console.error("Deprecated: Please use getData method instead");
+        return getData();
     }
 
-
-    function getData (){
+    function getData() {
         var data = {};
-        for(var property in node){
+        for (var property in node) {
             data[property] = this[property];
         }
         return data;
     }
 
-
-    function hasNext (){
+    function hasNext() {
         return getNext() !== undefined;
     }
 
-    function hasPrev (){
+    function hasPrev() {
         return getPrevious() !== undefined;
     }
 
-
-    function setNext (obj){
+    function setNext(obj) {
         next = obj;
         return node;
     }
 
-
-    function setPrevious (obj){
+    function setPrevious(obj) {
         prev = obj;
         return node;
     }
 
-
-    function getNext (){
+    function getNext() {
         return next;
     };
 
-    function getPrevious (){
+    function getPrevious() {
         return prev;
     };
 
     return node;
 }
+
+/***/ })
+/******/ ]);
+});
+//# sourceMappingURL=doublelinkedlist.js.map
