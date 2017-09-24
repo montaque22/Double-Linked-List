@@ -2,7 +2,7 @@
   "name": "double-linkedlist",
   "version": "0.2.2",
   "description": "A double linked list data structure for storing data",
-  "main": "doubleLinkList.js",
+  "main": "dist/doublelinkedlist.js",
   "scripts": {
     "compile": "rm -r -f ./dist && ./node_modules/.bin/webpack && ./node_modules/.bin/webpack -p",
     "test": "mocha tests/main.js"
