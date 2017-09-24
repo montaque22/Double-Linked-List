@@ -3,6 +3,7 @@
 ## Breaking Change - Migrating to V1.0.0
 Version 1.0.0 changed the way you instantiate for node. 
 See the getting started section for more on how to get started.
+Also please see change log for deprecated methods.
 
 ## Getting Started
 
@@ -16,13 +17,15 @@ and for node...
 var DoubleLinkedList = require('double-linkedlist').DoubleLinkedList;
 var linkedList =  new DoubleLinkedList();
 ```
-
-## Changelog
+***
+## Changelog v1.0.0
 
 - Updated documentation
 - Updated build. Now includes minified version.
 - Converted the build to UMD. As a result the instantiation process for node has changed.
-- Cycle method has been removed. Please use Psychic method instead.
+- **Cycle method has been removed. Please use Psychic method instead.**
+
+***
 ### Table of Contents
 
 -   [DoubleLinkedList](#doublelinkedlist)
