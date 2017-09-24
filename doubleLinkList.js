@@ -245,9 +245,9 @@ export const DoubleLinkedList = function () {
     /**
      * @namespace DoubleLinkedList-Type
      * @callback Psychic-Callback
-     * @param {Object} currentNode - The current node object in the list
-     * @param {Object} previousNode - The previous node object in the list
-     * @param {Object} nextNode - The next node object in the list
+     * @param {LinkNode} currentNode - The current node object in the list
+     * @param {LinkNode} previousNode - The previous node object in the list
+     * @param {LinkNode} nextNode - The next node object in the list
      * @param {Number} idx - index of the object in the list
      * @return {boolean} Optionally the user can return false to break free from the cycle early
      */
@@ -255,7 +255,7 @@ export const DoubleLinkedList = function () {
     /**
      * @namespace DoubleLinkedList-Type
      * @callback Callback
-     * @param {Object} node - object in the list
+     * @param {LinkNode} node - object in the list
      * @param {Number} idx - index of the object in the list
      * @return {boolean} Optionally the user can return false to break free from the cycle early
      */
@@ -263,7 +263,7 @@ export const DoubleLinkedList = function () {
     /**
      * @namespace DoubleLinkedList-Type
      * @callback Comparitor
-     * @param {Object} node - object in the list
+     * @param {LinkNode} node - object in the list
      * @param {Number} idx - index of the object in the list
      * @return {boolean} the user should return true any time a condition is met while comparing the node
      */

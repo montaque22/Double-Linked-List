@@ -250,9 +250,9 @@ Type: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Referen
 
 **Parameters**
 
--   `currentNode` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The current node object in the list
--   `previousNode` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The previous node object in the list
--   `nextNode` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** The next node object in the list
+-   `currentNode` **[LinkNode](#linknode)** The current node object in the list
+-   `previousNode` **[LinkNode](#linknode)** The previous node object in the list
+-   `nextNode` **[LinkNode](#linknode)** The next node object in the list
 -   `idx` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** index of the object in the list
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Optionally the user can return false to break free from the cycle early
@@ -263,7 +263,7 @@ Type: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Referen
 
 **Parameters**
 
--   `node` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** object in the list
+-   `node` **[LinkNode](#linknode)** object in the list
 -   `idx` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** index of the object in the list
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** the user should return true any time a condition is met while comparing the node
@@ -274,7 +274,7 @@ Type: [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Referen
 
 **Parameters**
 
--   `node` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** object in the list
+-   `node` **[LinkNode](#linknode)** object in the list
 -   `idx` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** index of the object in the list
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Optionally the user can return false to break free from the cycle early
